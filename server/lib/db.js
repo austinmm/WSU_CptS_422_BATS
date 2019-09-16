@@ -1,15 +1,15 @@
 //EXAMPLE file for creating a db model for SQL interfacing
 const mysql = require('mysql');
-const database_name = '';
+const database_name = 'bats';
 let conn;
 let options = {};
 let db = {};
 
-options.host = process.env.DB_HOST || 'localhost';
-options.user = process.env.DB_USERNAME || 'root';
-options.password = process.env.DB_PASSWORD || 'password';
+options.host = process.env.DB_HOST || '422-bats-mysql.mysql.database.azure.com';
+options.user = process.env.DB_USERNAME || 'bats@422-bats-mysql';
+options.password = process.env.DB_PASSWORD || '422pass123!';
 options.port = process.env.DB_PORT || '3306';
-options.database = database_name || 'firstDB';
+options.database = process.env.DB_NAME || database_name;
 console.log('Connecting to remote database');
 
 conn = mysql.createConnection(options);
@@ -19,8 +19,11 @@ conn.connect(err => {
 		console.error(`error connecting: ${err.stack}`);
 		return;
 	}
-
 	console.log(`connected as id ${conn.threadId}`);
+
+	conn.query(`CREATE DATABASE IF NOT EXISTS ${database_name};`, (err, results) => {
+		if (err) console.log(err);
+	});
 });
 
 db.executeQuery = (query, queryParams) => {
