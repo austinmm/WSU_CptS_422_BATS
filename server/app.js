@@ -8,6 +8,9 @@ const indexRouter = require('./routes/index');
 const databaseRouter = require('./routes/databaseExample'); 
 //const databaseExampleRouter = require('./routes/databaseExample'); 
 
+const tokensRouter = require('./routes/tokens');
+const tagsRouter = require('./routes/tags');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -49,6 +52,9 @@ app.use('/another/example', indexRouter);     //it's standard to have this be th
 //The database end point will stay commented out unless there is an actual database
 //  that is setup, if a database exists, open lib/db and enter the db info accordingly.
 app.use('/db', databaseRouter); //All end points from this path will be related to our database
+
+app.use('/api/tokens', tokensRouter);
+app.use('/api/tags', tagsRouter);
                                 
 
 //0.0.0.0 is the localhost and runs on your chosen port
