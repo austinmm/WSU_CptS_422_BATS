@@ -76,9 +76,10 @@ conn.connect(async err => {
 		});
 	}
 
-	/* Generate mock data. */
+	/* Generate mock data. 
 	const { generateMockData } = require('./mock');
 	generateMockData();
+	*/
 });
 
 /* Helper function to execute queries. */
