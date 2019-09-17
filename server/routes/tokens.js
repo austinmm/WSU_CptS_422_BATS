@@ -8,7 +8,7 @@ const router = express.Router();
 //example:  localhost:<port>/db/insert?username=<someName>&password=<somePassword>
 router.get('/', async (req, res) => {
   //Tip! Queries tend to be long, so go to menu at top of vs code View > Toggle Word Wrap
-  const query = `SELECT * FROM tokens WHERE name='${req.query}'`; 
+  const query = `SELECT * FROM tokens WHERE token='${req.query}'`; 
 
   const results = await executeQuery(query); //Executes query
 
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
   }
   //The user is new and thhus we generate a new token for them
   var new_token = create_uuid_token()
-  const query = `INSERT INTO Tokens (Token, Organization, Issued) VALUES ('${new_token}', '${organization}', CURRENT_TIMESTAMP())`;
+  const query = `INSERT INTO tokens (token, organization, issued) VALUES ('${new_token}', '${organization}', CURRENT_TIMESTAMP())`;
   const results = await executeQuery(query); //Executes query
   //returns the json of new record that was inserted into the table
   res.send({
@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
 
 function check_organizational_existance(organization){
   //This function is used to check if an organization exist within our Tokens table
-  const query = `SELECT * FROM Tokens WHERE Organization='${organization}'`;
+  const query = `SELECT * FROM tokens WHERE organization='${organization}'`;
   const results = await executeQuery(query); //Executes query
   return results.length != 0;
 }
