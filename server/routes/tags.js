@@ -34,7 +34,7 @@ router.get("/:name", async (req, res) => {
     const tag_name = req.params.name;
     const token = get_authorization_token(req.headers);
     console.log(token);
-    var query = `SELECT * FROM tags WHERE token_id='${token}' AND name='${tag_name}'`;
+    var query = `SELECT * FROM tags, tokens WHERE token='${token}' AND tags.token_id = tokens.id AND tags.name='${tag_name}'`;
     const results = await executeQuery(query); //Executes query
     //returns the json of new record that was inserted into the table
     res.send({"Status": "Successful", 
@@ -52,7 +52,7 @@ router.get("/:name", async (req, res) => {
 router.get("/", async (req, res) => {
   const token = get_authorization_token(req.headers);
   //If the tag name is  provided then we return the tag provided else we return all tags
-  var query = `SELECT * FROM tags WHERE token_id='${token}'`;
+  var query = `SELECT * FROM tags, tokens WHERE token='${token}' AND tags.token_id = tokens.id`;
   const results = await executeQuery(query); //Executes query
   //returns the json of new record that was inserted into the table
   res.send({"Status": "Successful", 
