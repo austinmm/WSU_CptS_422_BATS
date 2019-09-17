@@ -4,10 +4,6 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 //TODO: Create all routes here!
-const indexRouter = require('./routes/index'); 
-const databaseRouter = require('./routes/databaseExample'); 
-//const databaseExampleRouter = require('./routes/databaseExample'); 
-
 const tokensRouter = require('./routes/tokens');
 const tagsRouter = require('./routes/tags');
 
@@ -41,17 +37,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /*ROUTES*/
-//TODO: Add all routes here 
-//first paramater is the path
-//second parameter is the route object
-app.use('/', indexRouter);
-app.use('/index', indexRouter);               //note that these work like folder paths, for organization purpose
-app.use('/another/example', indexRouter);     //it's standard to have this be the parent path to a group of related
-                                              //end points, in this case I just reused indexRouter
 
 //The database end point will stay commented out unless there is an actual database
 //  that is setup, if a database exists, open lib/db and enter the db info accordingly.
-app.use('/db', databaseRouter); //All end points from this path will be related to our database
+//app.use('/db', databaseRouter); //All end points from this path will be related to our database
 
 app.use('/api/tokens', tokensRouter);
 app.use('/api/tags', tagsRouter);
@@ -63,9 +52,6 @@ app.listen(port, '0.0.0.0', () => {
     console.log(`\nYour template server is up and running!`);
     console.log(`The server will run as long as this process in this terminal\nis not interrupted`);
     console.log(`To kill server Press Ctrl-C or close the terminal`);
-    console.log(`\nThings to try:`)
-    console.log(`   [1.]Open a browser and enter 'localhost:${port}/' as the URL to view your server`);
-    console.log(`   [2.]Visit localhost:${port}/withParams?SomeRandomParameterName=Hi_I_Am_Niko`);
-    console.log(`   [3.]Use postman and send a post request to localhost:${port}/postExample`);
+    console.log(`Open a browser and enter 'localhost:${port}/' as the URL to view your server`);
 });
 
