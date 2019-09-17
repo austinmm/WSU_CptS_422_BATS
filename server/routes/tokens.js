@@ -2,7 +2,7 @@ const express = require('express');
 const moment = require('moment');
 const { executeQuery } = require('../lib/db');
 const router = express.Router();
-const uuidv4 = require('uuid/v4');
+const uuid = require('uuid/v4');
 
 //This assumes you have setup the db.js fields to connect to your db
 //example:  localhost:<port>/db/insert?username=<someName>&password=<somePassword>
@@ -34,7 +34,7 @@ router.post('/:organization', async (req, res) => {
   }
   console.log("Pass");
   //The user is new and thus we generate a new token for them
-  var new_token = uuidv4();
+  var new_token = uuid();
   const query = `INSERT INTO tokens (token, organization, issued) VALUES ('${new_token}', '${organization}', CURRENT_TIMESTAMP())`;
   const results = await executeQuery(query); //Executes query
   //returns the json of new record that was inserted into the table
