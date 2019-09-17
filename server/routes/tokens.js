@@ -23,7 +23,7 @@ Request: POST /api/tokens, body={“organization”: “My Company Name”}
 Response: 500, 202: {“id”: 0, “token”: “...”, “issued”: “datetime”}
 */
 router.post('/:organization', async (req, res) => {
-  organization = req.params.organization;
+  const organization = req.params.organization;
   //checks and handles if the organization making the post request already has an existing token/account with us
   already_exist = await check_organizational_existance(organization);
   if (already_exist == true){
@@ -31,33 +31,26 @@ router.post('/:organization', async (req, res) => {
       "Result": `Your organization, ${organization}, already has an account/token`});
   }
   //The user is new and thus we generate a new token for them
-  var new_token = uuid();
+  const new_token = uuid();
   const query = `INSERT INTO tokens (token, organization, issued) VALUES ('${new_token}', '${organization}', CURRENT_TIMESTAMP())`;
   const results = await executeQuery(query); //Executes query
   //returns the json of new record that was inserted into the table
-  res.send({"Status": "Success", 
-  "Result": {"ID": results.insertId, "Token": new_token}});
+  res.send({"Status": "Successful", 
+  "Result": {"ID": results.insertId, "Organization": organization, "Token": new_token}});
 });
 
-router.get('/dbstatus', async (req, res) => {
+//helper endpoint to let anyone see all the entires in the tokens table
+router.get('/all', async (req, res) => {
   const query = `SELECT * FROM tokens`;
   const results = await executeQuery(query); //Executes query
-  //returns the json of new record that was inserted into the table
-  res.send(results);
+  res.send({"Status": "Successful", "Result": results});
 });
 
 async function check_organizational_existance(org_name){
   //This function is used to check if an organization exist within our Tokens table
   const query = `SELECT * FROM tokens WHERE organization='${org_name}'`;
   const results = await executeQuery(query); //Executes query
-  return results == undefined? false : results.length != 0? true : false;
-}
-
-async function check_token_existance(token_val){
-  //This function is used to check if an organization exist within our Tokens table
-  const query = `SELECT * FROM tokens WHERE token='${token_val}'`;
-  const results = await executeQuery(query); //Executes query
-  return results == undefined? false : results.length != 0? true : false;
+  return !results? false : results.length != 0? true : false;
 }
 
 module.exports = router;
