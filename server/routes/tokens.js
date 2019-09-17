@@ -40,10 +40,10 @@ router.post('/:organization', async (req, res) => {
 });
 
 //helper endpoint to let anyone see all the entires in the tokens table
-router.get('/', async (req, res) => {
+router.get('/all', async (req, res) => {
   const query = `SELECT * FROM tokens`;
   const results = await executeQuery(query); //Executes query
-  res.send(results);
+  res.send({"Status": "Successful", "Result": results});
 });
 
 async function check_organizational_existance(org_name){
