@@ -56,7 +56,7 @@ conn = mysql.createConnection(options);
 
 /* Connect to the database. */
 console.log('Connecting to remote database');
-conn.connect(err => {
+conn.connect(async err => {
 	if (err) {
 		console.error(`error connecting: ${err.stack}`);
 		return;
@@ -70,18 +70,22 @@ conn.connect(err => {
 	});
 
 	/* Create the tables if they do not exist. */
-	TABLES.forEach((stmt) => {
-		conn.query(stmt, (err) => {
+	for (var i in TABLES) {
+		await conn.query(TABLES[i], (err) => {
 			if (err) console.log(err);
 		});
-	});
+	}
+
+	/* Generate mock data. */
+	const { generateMockData } = require('./mock');
+	generateMockData();
 });
 
 /* Helper function to execute queries. */
 db.executeQuery = (query, queryParams) => {
 	return new Promise((resolve, reject) => {
 		conn.query(query, queryParams, (err, results) => {
-			if (err) console.log (err);
+			if (err) console.log(err);
 			resolve(results);
 		});
 	}).catch(e => console.log(e));
