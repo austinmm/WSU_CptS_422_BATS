@@ -37,9 +37,8 @@ router.post('/:organization', async (req, res) => {
   const results = await executeQuery(query); //Executes query
   console.log(`***** return: ${results} *****`);
   //returns the json of new record that was inserted into the table
-  res.send({
-      results
-  });
+  //res.send({ results });
+  res.send("Hello");
 
 });
 
