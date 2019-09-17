@@ -23,22 +23,20 @@ Request: POST /api/tokens, body={“organization”: “My Company Name”}
 Response: 500, 202: {“id”: 0, “token”: “...”, “issued”: “datetime”}
 */
 router.post('/:organization', async (req, res) => {
-  //var organization = req.body["organization"];
   organization = req.params.organization;
   //checks and handles if the organization making the post request already has an existing token/account with us
   already_exist = await check_organizational_existance(organization);
-  console.log(already_exist);
   if (already_exist == true){
     res.send({"Status": "Failure", 
-      "Message": `Your organization, ${organization}, already has an account/token`});
+      "Result": `Your organization, ${organization}, already has an account/token`});
   }
-  console.log("Pass");
   //The user is new and thus we generate a new token for them
   var new_token = uuid();
   const query = `INSERT INTO tokens (token, organization, issued) VALUES ('${new_token}', '${organization}', CURRENT_TIMESTAMP())`;
   const results = await executeQuery(query); //Executes query
   //returns the json of new record that was inserted into the table
-  res.send({"Status": "Success", "Token": new_token});
+  res.send({"Status": "Success", 
+  "Result": {"ID": results.insertId, "Token": new_token}});
 });
 
 router.get('/dbstatus', async (req, res) => {
@@ -52,7 +50,6 @@ async function check_organizational_existance(org_name){
   //This function is used to check if an organization exist within our Tokens table
   const query = `SELECT * FROM tokens WHERE organization='${org_name}'`;
   const results = await executeQuery(query); //Executes query
-  console.log(results)
   return results == undefined? false : results.length != 0? true : false;
 }
 
