@@ -1,0 +1,214 @@
+openapi: 3.0.0
+info:
+  description: "Business Analytics Tracking Service"
+  version: "1.0.0"
+  title: "B.A.T.S"
+tags:
+- name: "tokens"
+  description: "Token endpoints"
+- name: "tags"
+  description: "Tag endpoints"
+paths:
+  /tokens:
+    post:
+      tags:
+      - "tokens"
+      summary: "Create a new token"
+      parameters:
+      - in: "query"
+        name: "organization"
+        description: "Organization which requested to create the token"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        202:
+          description: "Accepted"
+        500:
+          description: "Internal server error"
+  /tokens/{token}:
+    get:
+      tags:
+      - "tokens"
+      summary: "Get information about a token"
+      security:
+        - bearerAuth: []
+      parameters:
+      - in: "path"
+        name: "token"
+        description: "Token"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenInfo"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "Token not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: "Internal server error"
+    delete:
+      tags:
+      - "tokens"
+      summary: "Delete token and related tags/interactions"
+      security:
+        - bearerAuth: []
+      parameters:
+      - in: "path"
+        name: "token"
+        description: "Token"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "Success"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "Token not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: "Internal server error"
+  /tags/{name}:
+    get:
+      tags:
+      - "tags"
+      summary: "Get a list of all tags and sub-tags and their metadata"
+      security:
+        - bearerAuth: []
+      parameters:
+      - in: "path"
+        name: "name"
+        description: "Tag name"
+        required: true
+        schema:
+          type: "string"
+      - in: "query"
+        name: "interaction"
+        description: "Type of interaction"
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagList"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "No tags found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: "Internal server error"
+    post:
+      tags:
+      - "tags"
+      summary: "Create or update a tag and then add an interaction for the tag"
+      security:
+        - bearerAuth: []
+      parameters:
+      - in: "path"
+        name: "name"
+        description: "Tag name"
+        required: true
+        schema:
+          type: "string"
+      - in: "query"
+        name: "interaction"
+        description: "Type of interaction"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        202:
+          description: "Accepted"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: "Internal server error"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    TokenInfo:
+      type: "object"
+      properties:
+        organization:
+          type: "string"
+          example: "BATS"
+        issued:
+          type: "string"
+          example: "2019-11-16 00:00:00"
+    TagList:
+      type: "array"
+      items:
+        type: "object"
+        properties:
+          name:
+            type: "string"
+            example: "groups.group1"
+          created:
+            type: "string"
+            example: "2019-11-16 00:00:00"
+          interactions:
+            type: "integer"
+            format: "int64"
+            example: "100"
+    Error:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int32"
+        message:
+          type: "string"
