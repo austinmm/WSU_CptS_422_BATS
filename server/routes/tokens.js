@@ -25,10 +25,10 @@ Response: 500, 202: {“id”: 0, “token”: “...”, “issued”: “datet
 router.post('/:organization', async (req, res) => {
   const organization = req.params.organization;
   //checks and handles if the organization making the post request already has an existing token/account with us
-  already_exist = await check_organizational_existance(organization);
-  if (already_exist == true){
-    res.send({"Status": "Failure", 
-      "Result": `Your organization, ${organization}, already has an account/token`});
+  const org_token = await check_organizational_existance(organization);
+  if (org_token){
+    res.send({"Status": "Successful", 
+      "Result": `Your organization, ${organization}, already has an account.`});
   }
   //The user is new and thus we generate a new token for them
   const new_token = uuid();
@@ -48,9 +48,9 @@ router.get('/all', async (req, res) => {
 
 async function check_organizational_existance(org_name){
   //This function is used to check if an organization exist within our Tokens table
-  const query = `SELECT * FROM tokens WHERE organization='${org_name}'`;
+  const query = `SELECT token FROM tokens WHERE organization='${org_name}'`;
   const results = await executeQuery(query); //Executes query
-  return !results? false : results.length != 0? true : false;
+  return !results || !results[0]? undefined : results[0].token;
 }
 
 module.exports = router;
