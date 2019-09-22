@@ -28,13 +28,11 @@
  </html>
 
 <script type="text/javascript">
-    const mockToken = '41cab618-8142-41f3-a399-603f8ff79f76';
-
-    function make_post(token, tag_name, interaction) {
+    function make_post(tag_name, interaction) {
         $.ajax({
             url: `localhost:3000/api/tags/${tag_name}?interaction=${interaction}`,
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer 41cab618-8142-41f3-a399-603f8ff79f76`,
             },
             method: 'POST',
             success: function(resp) {
@@ -44,23 +42,23 @@
     }
 
     $(document).ready(function() {
-        make_post(mockToken, "pages.demo", "PageView");
+        make_post("pages.demo", "PageView");
     });
 
     $("#g1_btn1").click(function() {
         console.log("Group1 -> Button 1");
-        make_post(mockToken, "group1.button1", "ButtonClick");
+        make_post("group1.button1", "ButtonClick");
     });
     $("#g1_btn2").click(function() {
         console.log("Group1 -> Button 2");
-        make_post(mockToken, "group1.button2", "ButtonClick");
+        make_post("group1.button2", "ButtonClick");
     });
     $("#g2_btn1").click(function() {
         console.log("Group2 -> Button 1");
-        make_post(mockToken, "group2.button1", "ButtonClick");
+        make_post("group2.button1", "ButtonClick");
     });
     $("#g2_btn2").click(function() {
         console.log("Group2 -> Button 2");
-        make_post(mockToken, "group2.button2", "ButtonClick");
+        make_post("group2.button2", "ButtonClick");
     });
 </script>
