@@ -13,7 +13,7 @@ const TOKENS_TABLE = `
 		organization VARCHAR(255) NOT NULL,
 		issued TIMESTAMP NOT NULL,
 		PRIMARY KEY (id),
-		INDEX (token)
+		UNIQUE KEY (token)
 	);
 `;
 
@@ -62,7 +62,7 @@ conn.connect(async err => {
 		return;
 	}
 	console.log(`connected as id ${conn.threadId}`);
-	
+
 	/*conn.query(`DROP DATABASE ${database_name};`, (err) => {
 		if (err) console.log(err);
 	});*/
