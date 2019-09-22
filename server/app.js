@@ -3,7 +3,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-//TODO: Create all routes here!
 const baseRouter = require('./routes/base');
 const tokensRouter = require('./routes/tokens');
 const tagsRouter = require('./routes/tags');
@@ -38,15 +37,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /*ROUTES*/
-
-//The database end point will stay commented out unless there is an actual database
-//  that is setup, if a database exists, open lib/db and enter the db info accordingly.
-//app.use('/db', databaseRouter); //All end points from this path will be related to our database
-
 app.use('/api/', baseRouter);
 app.use('/api/tokens', tokensRouter);
 app.use('/api/tags', tagsRouter);
-                                
 
 //0.0.0.0 is the localhost and runs on your chosen port
 //server can be accessed from browser at 'localhost:<portnumber>' as the url
