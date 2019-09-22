@@ -22,7 +22,7 @@ const TAGS_TABLE = `
 	CREATE TABLE IF NOT EXISTS tags (
 		id BIGINT NOT NULL AUTO_INCREMENT,
 		token_id BIGINT NOT NULL,
-		name TEXT NOT NULL,
+		name VARCHAR(3072) NOT NULL UNIQUE,
 		value TEXT NULL,
 		created TIMESTAMP NOT NULL,
 		PRIMARY KEY (id),
@@ -62,6 +62,10 @@ conn.connect(async err => {
 		return;
 	}
 	console.log(`connected as id ${conn.threadId}`);
+	
+	/*conn.query(`DROP DATABASE ${database_name};`, (err) => {
+		if (err) console.log(err);
+	});*/
 
 	/* Create the database if it does not exist. Note: options.database must be ommited to
 	   to run this step for the database to be created. */
@@ -75,8 +79,7 @@ conn.connect(async err => {
 			if (err) console.log(err);
 		});
 	}
-
-	/* Generate mock data. 
+	/* Generate mock data.
 	const { generateMockData } = require('./mock');
 	generateMockData();
 	*/

@@ -4,18 +4,34 @@ const { executeQuery } = require('../lib/db');
 const router = express.Router();
 const uuid = require('uuid/v4');
 
-//This assumes you have setup the db.js fields to connect to your db
-//example:  localhost:<port>/db/insert?username=<someName>&password=<somePassword>
-router.get('/', async (req, res) => {
+//Returns the information of a specific token entity
+router.get('/:token', async (req, res) => {
   //Tip! Queries tend to be long, so go to menu at top of vs code View > Toggle Word Wrap
-  const query = `SELECT * FROM tokens WHERE token='${req.query}'`; 
-
+  const token = req.params.token;
+  const query = `SELECT * FROM tokens WHERE token='${token}'`; 
   const results = await executeQuery(query); //Executes query
+  if(results.length == 0){
+    res.status(204);
+    res.send(`Notice: Cannot locate token ${token} in our database.`);
+  }
+  else{
+    res.status(200);
+    res.send(results);
+  }
+});
 
-  res.send({
-      results
-  });
-
+//Returns all tokens in our database
+router.get('/', async (req, res) => {
+  const query = `SELECT * FROM tokens`;
+  const results = await executeQuery(query); //Executes query
+  if(results.length == 0){
+    res.status(204);
+    res.send("Notice: No tokens exist.");
+  }
+  else{
+    res.status(200);
+    res.send(results);
+  }
 });
 
 /*
@@ -25,32 +41,25 @@ Response: 500, 202: {“id”: 0, “token”: “...”, “issued”: “datet
 router.post('/:organization', async (req, res) => {
   const organization = req.params.organization;
   //checks and handles if the organization making the post request already has an existing token/account with us
-  already_exist = await check_organizational_existance(organization);
-  if (already_exist == true){
-    res.send({"Status": "Failure", 
-      "Result": `Your organization, ${organization}, already has an account/token`});
+  const org_token = await check_organizational_existance(organization);
+  if (org_token){
+    res.status(200)
+    res.send(`Notice: Your organization, ${organization}, already has an account.`);
   }
   //The user is new and thus we generate a new token for them
   const new_token = uuid();
   const query = `INSERT INTO tokens (token, organization, issued) VALUES ('${new_token}', '${organization}', CURRENT_TIMESTAMP())`;
   const results = await executeQuery(query); //Executes query
   //returns the json of new record that was inserted into the table
-  res.send({"Status": "Successful", 
-  "Result": {"ID": results.insertId, "Organization": organization, "Token": new_token}});
-});
-
-//helper endpoint to let anyone see all the entires in the tokens table
-router.get('/all', async (req, res) => {
-  const query = `SELECT * FROM tokens`;
-  const results = await executeQuery(query); //Executes query
-  res.send({"Status": "Successful", "Result": results});
+  res.status(201)
+  res.send({"token": {"id": results.insertId, "organization": organization, "token": new_token}});
 });
 
 async function check_organizational_existance(org_name){
   //This function is used to check if an organization exist within our Tokens table
-  const query = `SELECT * FROM tokens WHERE organization='${org_name}'`;
+  const query = `SELECT token FROM tokens WHERE organization='${org_name}'`;
   const results = await executeQuery(query); //Executes query
-  return !results? false : results.length != 0? true : false;
+  return !results || !results[0]? undefined : results[0].token;
 }
 
 module.exports = router;

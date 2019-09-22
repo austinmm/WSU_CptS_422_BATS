@@ -6,18 +6,53 @@ const router = express.Router();
 
 //Checks that all 'api/tag' request are made with the Bearer Auth'
 router.use("/", async (req, res, next) => {
-  var token = req.headers.authorization;
-  if (!token) {
-    res.send({"Status": "Failure", 
-      "Result": 'No credentials sent!'});
+  if (!res.locals.token) {
+    res.status(401);
+    res.send('No authentication provided.');
   }
-  token = get_authorization_token(req.headers);
-  const is_valid_token = await check_token_existance(token);
-  if (!is_valid_token) {
-    res.send({"Status": "Failure", 
-      "Result": 'Invalid credentials sent!'});
+  else if (res.locals.token_id == 0) {
+    res.status(403);
+    res.send('Improper authentication provided.');
   }
   else next();
+});
+
+
+/*
+  User creates/updates a specific tag/interaction
+  Request: POST /api/tags/<name>?interaction=""
+  Response: 500 internal server error, 200: body = {
+    “tags”: { "id": ..., “name”, “...”, “value”: ...},
+    “interactions”: {"id": ..., "action": “...”}
+  }
+*/
+router.post("/:name", async (req, res) => {
+  const tag_name = req.params.name;
+  const interaction = req.query.interaction;
+  const value = req.query.value;
+  const token_id = res.locals.token_id;
+  var response = undefined;
+  try {
+    var query = `INSERT IGNORE INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP())`;
+    var results = await executeQuery(query); //Executes query
+    var tag_id = results.insertId;
+    //Tag already exist so we need to obtain its 'id' to enter the new interaction 
+    if(tag_id == 0){
+      query = `SELECT id FROM tags WHERE name='${tag_name}'`;
+      results = await executeQuery(query); //Executes query
+      tag_id = results[0].id; 
+    }
+    query = `INSERT INTO interactions (tag_id, action, time) VALUES ('${tag_id}', '${interaction}', CURRENT_TIMESTAMP())`;
+    results = await executeQuery(query); //Executes query
+    res.status(201);
+    response = {"tag": {"id": tag_id, "name": tag_name, "value": value}, "interaction": {"id": results.insertId, "action": interaction}};
+  }
+  catch(err) {
+    response = err;
+    res.status(500);
+  }  
+  //returns the json of new record that was inserted into the table
+  res.send(response);
 });
 
 
@@ -32,13 +67,18 @@ router.use("/", async (req, res, next) => {
 
 router.get("/:name", async (req, res) => {
     const tag_name = req.params.name;
-    const token = get_authorization_token(req.headers);
-    console.log(token);
-    var query = `SELECT * FROM tags, tokens WHERE token='${token}' AND tags.token_id = tokens.id AND tags.name='${tag_name}'`;
+    const token = res.locals.token;
+    //The following SQL statement selects all tags with a name starting with "tag_name":
+    var query = `SELECT * FROM tags, tokens WHERE token='${token}' AND tags.token_id = tokens.id AND tags.name LIKE '${tag_name}%'`;
     const results = await executeQuery(query); //Executes query
-    //returns the json of new record that was inserted into the table
-    res.send({"Status": "Successful", 
-    "Result": results});
+    if(results.length == 0){
+      res.status(204);
+      res.send(`Notice: You do not have any tags that begin with '${tag_name}'`);
+    }
+    else{
+      res.status(200);
+      res.send(results);
+    }
 });
 
 /*
@@ -50,25 +90,19 @@ router.get("/:name", async (req, res) => {
   } 
 */
 router.get("/", async (req, res) => {
-  const token = get_authorization_token(req.headers);
+  const token = res.locals.token;
   //If the tag name is  provided then we return the tag provided else we return all tags
   var query = `SELECT * FROM tags, tokens WHERE token='${token}' AND tags.token_id = tokens.id`;
   const results = await executeQuery(query); //Executes query
   //returns the json of new record that was inserted into the table
-  res.send({"Status": "Successful", 
-  "Result": results});
+  if(results.length == 0){
+    res.status(204);
+    res.send("Notice: You have not created any tags.");
+  }
+  else{
+    res.status(200);
+    res.send(results);
+  }
 });
-
-function get_authorization_token(req_headers){
-  bearer_token = req_headers.authorization;
-  return !bearer_token? "": bearer_token.split(" ")[1];;
-}
-
-async function check_token_existance(token){
-  //This function is used to check if an organization exist within our Tokens table
-  const query = `SELECT * FROM tokens WHERE token='${token}'`;
-  const results = await executeQuery(query); //Executes query
-  return !results? false : results.length != 0? true : false;
-}
 
 module.exports = router;
