@@ -15,12 +15,12 @@ router.get('/:token', async (req, res) => {
     return;
   }
   res.status(200);
-  res.send(results);
+  res.send(results[0]);
 });
 
 /* Returns all tokens in our database. */
 router.get('/', async (req, res) => {
-  const query = `SELECT token FROM tokens ORDER BY issued DESC;`;
+  const query = `SELECT token, organization, issued FROM tokens ORDER BY issued DESC;`;
   const results = await executeQuery(query);
   if (results.length == 0) {
     res.status(404);
@@ -32,8 +32,8 @@ router.get('/', async (req, res) => {
 });
 
 /* Create a token. */
-router.post('/:organization', async (req, res) => {
-  const organization = req.params.organization;
+router.post('/', async (req, res) => {
+  const organization = req.query.interaction;
   /* Checks and handles if the organization making the post request already has an existing token/account with us. */
   const org_token = await check_organizational_existance(organization);
   if (org_token) {

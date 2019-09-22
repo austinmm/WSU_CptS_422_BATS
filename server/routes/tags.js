@@ -34,7 +34,7 @@ router.post('/:name', async (req, res) => {
     query = `INSERT INTO interactions (tag_id, action, time) VALUES ('${tag_id}', '${interaction}', CURRENT_TIMESTAMP());`;
     results = await executeQuery(query);
     res.status(201);
-    res.send({"tag": {"name": tag_name, "value": value}, "interaction": actioninteraction});
+    res.send({"tag": {"name": tag_name, "value": value}, "interaction": interaction});
   } catch (err) {
     res.status(500);
     console.log(err);
@@ -43,18 +43,18 @@ router.post('/:name', async (req, res) => {
 
 /* User queries a specific tag. */
 router.get('/:name', async (req, res) => {
-    const tag_name = req.params.name;
-    const token = res.locals.token;
-    /* The following SQL statement selects all tags with a name starting with "tag_name". */
-    var query = `SELECT name, value, created FROM tags, tokens WHERE token='${token}' AND tags.token_id = tokens.id AND tags.name LIKE '${tag_name}%';`;
-    const results = await executeQuery(query);
-    if (results.length == 0) {
-      res.status(404);
-      res.send({code: 404, message: 'You have not created any tags.'});
-    } else {
-      res.status(200);
-      res.send(results);
-    }
+  const tag_name = req.params.name;
+  const token = res.locals.token;
+  /* The following SQL statement selects all tags with a name starting with "tag_name". */
+  var query = `SELECT name, value, created FROM tags, tokens WHERE token='${token}' AND tags.token_id = tokens.id AND tags.name LIKE '${tag_name}%';`;
+  const results = await executeQuery(query);
+  if (results.length == 0) {
+    res.status(404);
+    res.send({code: 404, message: 'You have not created any tags.'});
+  } else {
+    res.status(200);
+    res.send(results);
+  }
 });
 
 /* User queries all their tags. */
