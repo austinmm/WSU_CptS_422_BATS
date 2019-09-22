@@ -1,40 +1,38 @@
 const express = require('express');
-const moment = require('moment');
 const { executeQuery } = require('../lib/db');
 const router = express.Router();
 
-
-//Checks if the request is made with a valid Bearer Auth'
+/* Checks if the request is made with a valid Bearer Auth */
 router.use("/", async (req, res, next) => {
-    const token = res.locals.token = get_authorization_token(req.headers.authorization);
-    if(token){
-      res.locals.token_id = await check_token_existance(token);
-    }
-    next();
-  });
-
-  function get_authorization_token(bearer_token){
-    return !bearer_token? undefined: bearer_token.split(" ")[1];;
+  const token = res.locals.token = get_authorization_token(req.headers.authorization);
+  if (token){
+    res.locals.token_id = await check_token_existance(token);
   }
-  
-  async function check_token_existance(token){
-    //This function is used to check if an organization exist within our Tokens table
-    const query = `SELECT * FROM tokens WHERE token='${token}' LIMIT 1`;
-    const results = await executeQuery(query); //Executes query
-    try{
-      return results[0].id;
-    }catch(err){
-      return -1;
-    }
-  }
+  next();
+});
 
-  module.exports = router;
+function get_authorization_token(bearer_token) {
+  return !bearer_token ? undefined : bearer_token.split(" ")[1];
+}
+
+/* Checks if an organization exist within our Tokens table. */
+async function check_token_existance(token) {
+  const query = `SELECT id FROM tokens WHERE token='${token}' LIMIT 1`;
+  const results = await executeQuery(query);
+  try {
+    return results[0].id;
+  } catch (err) {
+    return -1;
+  }
+}
+
+module.exports = router;
 
 /* Popular HTTP Status Code Meanings
   ##### 200's: Indicates that the client’s request was accepted successfully #####
   * 200 (OK): It indicates that the REST API successfully carried out whatever action the client requested and that no more specific code in the 2xx series is appropriate.
 
-  * 201 (Created): Whenever a resource is created inside a collection. 
+  * 201 (Created): Whenever a resource is created inside a collection.
 
   * 202 (Accepted): Used for actions that take a long while to process. It indicates that the request has been accepted for processing, but the processing has not been completed.
 
