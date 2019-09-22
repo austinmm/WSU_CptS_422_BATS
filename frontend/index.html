@@ -1,30 +1,30 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>Demo Frontend</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <link href="main.css" rel="stylesheet" type="text/css">
- </head>
- <body>
-     <h1>BATS</h1>
-     <div class="groups">
-        <div class="group1">
-         <h2>Group 1</h2>
-            <div class="container">
-                <button type="button" id="g1_btn1">G1 Button 1</button>
-                <button type="button" id="g1_btn2">G1 Button 2</button>
+    <head>
+        <meta charset="UTF-8">
+        <title>Demo Frontend</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <link href="main.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <h1>BATS</h1>
+        <div class="groups">
+            <div class="group1">
+            <h2>Group 1</h2>
+                <div class="container">
+                    <button type="button" id="g1_btn1">G1 Button 1</button>
+                    <button type="button" id="g1_btn2">G1 Button 2</button>
+                </div>
             </div>
-         </div>
-        <div class="group2">
-         <h2 id="demo">Group 2</h2>
-            <div class="container">
-                <button type="button" id="g2_btn1">G2 Button 1</button>
-                <button type="button" id="g2_btn2">G2 Button 2</button>
+            <div class="group2">
+            <h2 id="demo">Group 2</h2>
+                <div class="container">
+                    <button type="button" id="g2_btn1">G2 Button 1</button>
+                    <button type="button" id="g2_btn2">G2 Button 2</button>
+                </div>
             </div>
-         </div>
-     </div>
- </body>
+        </div>
+    </body>
  </html>
 
 <script type="text/javascript">
@@ -42,6 +42,10 @@
             }
         });
     }
+
+    $(document).ready(function() {
+        make_post(mockToken, "pages.demo", "PageView");
+    });
 
     $("#g1_btn1").click(function() {
         console.log("Group1 -> Button 1");
