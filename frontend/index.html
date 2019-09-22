@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Demo Frontend</title>
-    <!--<script type="text/javascript" src="main.js"></script>-->   
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <link href="main.css" rel="stylesheet" type="text/css">
  </head>
  <body>
      <h1>BATS</h1>
-     <div class="Groups">
+     <div class="groups">
         <div class="group1">
          <h2>Group 1</h2>
             <div class="container">
@@ -18,58 +17,46 @@
             </div>
          </div>
         <div class="group2">
-         <h2 id="demo">Group 2</h2>  
+         <h2 id="demo">Group 2</h2>
             <div class="container">
                 <button type="button" id="g2_btn1">G2 Button 1</button>
                 <button type="button" id="g2_btn2">G2 Button 2</button>
             </div>
-         </div>  
+         </div>
      </div>
  </body>
  </html>
 
 <script type="text/javascript">
-    const base_url = "localhost:/3000/";
-    const tags_api = "api/tags/";
-    const url;
-    
-    function make_api_url(tag_name, interaction)
-    {
-        var url_str = base_url + tags_api + tag_name;
-        url_str += "/?interaction="+interaction;
-        return url_str;
+    const mockToken = '41cab618-8142-41f3-a399-603f8ff79f76';
+
+    function make_post(token, tag_name, interaction) {
+        $.ajax({
+            url: `localhost:3000/api/tags/${tag_name}?interaction=${interaction}`,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            method: 'POST',
+            success: function(resp) {
+                console.log(resp);
+            }
+        });
     }
-    
-    $("#g1_btn1").click(function(){
+
+    $("#g1_btn1").click(function() {
         console.log("Group1 -> Button 1");
-        url = make_api_url("group1.button1", "ButtonClick");
+        make_post(mockToken, "group1.button1", "ButtonClick");
     });
-    $("#g1_btn2").click(function(){
+    $("#g1_btn2").click(function() {
         console.log("Group1 -> Button 2");
-        url = make_api_url("group1.button2", "ButtonClick");
+        make_post(mockToken, "group1.button2", "ButtonClick");
     });
-    $("#g2_btn1").click(function(){
+    $("#g2_btn1").click(function() {
         console.log("Group2 -> Button 1");
-        url = make_api_url("group2.button1", "ButtonClick");
+        make_post(mockToken, "group2.button1", "ButtonClick");
     });
-    $("#g2_btn2").click(function(){
+    $("#g2_btn2").click(function() {
         console.log("Group2 -> Button 2");
-        url = make_api_url("group2.button2", "ButtonClick");
+        make_post(mockToken, "group2.button2", "ButtonClick");
     });
-    
-    function make_post(api_url){
-        const token = "41cab618-8142-41f3-a399-603f8ff79f76";
-         $.ajax({
-    url: 'YourRestEndPoint',
-    headers: {
-        'Authorization': `Bearer ${token}`,
-    },
-    method: 'POST',
-    data: YourData,
-    success: function(data){
-      console.log('succes: '+data);
-    }
-  });
-    }
 </script>
-        
