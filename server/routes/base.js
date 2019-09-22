@@ -1,18 +1,18 @@
 const express = require('express');
-const { executeQuery } = require('../lib/db');
 const router = express.Router();
+const { executeQuery } = require('../lib/db');
 
 /* Checks if the request is made with a valid Bearer Auth */
-router.use("/", async (req, res, next) => {
+router.use('/', async (req, res, next) => {
   const token = res.locals.token = get_authorization_token(req.headers.authorization);
-  if (token){
+  if (token) {
     res.locals.token_id = await check_token_existance(token);
   }
   next();
 });
 
 function get_authorization_token(bearer_token) {
-  return !bearer_token ? undefined : bearer_token.split(" ")[1];
+  return !bearer_token ? undefined : bearer_token.split(' ')[1];
 }
 
 /* Checks if an organization exist within our Tokens table. */
