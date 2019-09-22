@@ -9,7 +9,7 @@ tags:
 - name: "tags"
   description: "Tag endpoints"
 paths:
-  /tokens:
+  /tokens/:
     post:
       tags:
       - "tokens"
@@ -22,8 +22,14 @@ paths:
         schema:
           type: "string"
       responses:
-        202:
-          description: "Accepted"
+        200:
+          description: "Token already created"
+        201:
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenInfo"
         500:
           description: "Internal server error"
   /tokens/{token}:
@@ -117,6 +123,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TagList"
+        204:
+          description: "No Content"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notice"
         400:
           description: "Bad request"
           content:
@@ -125,6 +137,12 @@ paths:
                 $ref: "#/components/schemas/Error"
         401:
           description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "Forbidden"
           content:
             application/json:
               schema:
@@ -157,8 +175,8 @@ paths:
         schema:
           type: "string"
       responses:
-        202:
-          description: "Accepted"
+        201:
+          description: "Created"
         400:
           description: "Bad request"
           content:
@@ -167,6 +185,12 @@ paths:
                 $ref: "#/components/schemas/Error"
         401:
           description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "Forbidden"
           content:
             application/json:
               schema:
@@ -204,6 +228,9 @@ components:
             type: "integer"
             format: "int64"
             example: "100"
+    Notice:
+      type: "string"
+      example: "message"
     Error:
       type: "object"
       properties:
