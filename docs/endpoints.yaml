@@ -22,8 +22,12 @@ paths:
         schema:
           type: "string"
       responses:
-        200:
+        409:
           description: "Token already created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         201:
           description: "Created"
           content:
