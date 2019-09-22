@@ -43,14 +43,14 @@ module.exports = router;
 
   * 401 (Unauthorized): Indicates that the client tried to operate on a protected resource without providing the proper authorization. It may have provided the wrong credentials or none at all. The response must include a WWW-Authenticate header field containing a challenge applicable to the requested resource.
 
-  * 403 (Forbidden): Indicates that the client’s request is formed correctly, but the REST API refuses to honor it i.e. the user does not have the necessary permissions for the resource. 
+  * 403 (Forbidden): Indicates that the client’s request is formed correctly, but the REST API refuses to honor it i.e. the user does not have the necessary permissions for the resource.
 
-  * 404 (Not Found): Indicates that the REST API can’t map the client’s URI to a resource but may be available in the future. 
+  * 404 (Not Found): Indicates that the REST API can’t map the client’s URI to a resource but may be available in the future.
 
   * 405 (Method Not Allowed): Indicate that the client tried to use an HTTP method that the resource does not allow.
 
   ##### 500's: The server takes responsibility for these error status codes #####
   * 500 (Internal Server Error): Generic REST API error response. Most web frameworks automatically respond with this response status code whenever they execute some request handler code that raises an exception.
 
-  * 501 (Not Implemented): The server either does not recognize the request method, or it lacks the ability to fulfill the request. 
+  * 501 (Not Implemented): The server either does not recognize the request method, or it lacks the ability to fulfill the request.
 */

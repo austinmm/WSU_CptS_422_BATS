@@ -1,5 +1,4 @@
 const uuid = require('uuidv4').default;
-//const uuid = require('uuid/v4');
 const { executeQuery } = require('./db');
 
 async function generateMockTokens(amount) {
