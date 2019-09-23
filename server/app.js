@@ -8,7 +8,7 @@ const tokensRouter = require('./routes/tokens');
 const tagsRouter = require('./routes/tags');
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
