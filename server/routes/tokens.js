@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
 
 /* Create a token. */
 router.post('/', async (req, res) => {
-  const organization = req.query.interaction;
+  const organization = req.body.organization;
   /* Checks and handles if the organization making the post request already has an existing token/account with us. */
   const org_token = await check_organizational_existance(organization);
   if (org_token) {
