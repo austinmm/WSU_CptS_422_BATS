@@ -8,3 +8,6 @@ The bash script will check and install necessary dependencies. If you are not on
   - Clone this repo project with 'git clone https://github.com/nikokent/nodejs-template.git'
   - navigate to folder in terminal and run 'bash run-installs.sh'
   - If on mac add flag "--mysql" for full mysql setup
+
+## Testing:
+  - In terminal use "npm run-script test" to pull up a demo with a test token 
