@@ -4,7 +4,7 @@
   "description": "BATS API server.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "open ../frontend/index.html && echo \"Test auth token: 7edfa62b-0024-4f68-a2d4-d3319dfd6d2f\" && node app.js"
   },
   "keywords": [],
   "author": "",
