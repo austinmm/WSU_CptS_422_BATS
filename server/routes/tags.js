@@ -22,7 +22,7 @@ router.post('/:name', async (req, res) => {
   const value = req.query.value;
   const token_id = res.locals.token_id;
   try {
-    var query = `INSERT IGNORE INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP());`;
+    var query = `INSERT IGNORE INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP());;`;
     var results = await executeQuery(query);
     var tag_id = results.insertId;
     /* Tag already exist so we need to obtain its 'id' to enter the new interaction. */
@@ -31,6 +31,10 @@ router.post('/:name', async (req, res) => {
       results = await executeQuery(query);
       tag_id = results[0].id;
     }
+
+    // Update the tag value.
+    await executeQuery(`UPDATES tags SET value = '${value}' WHERE tag_id = ${tag_id};`);
+
     query = `INSERT INTO interactions (tag_id, action, time) VALUES ('${tag_id}', '${interaction}', CURRENT_TIMESTAMP());`;
     results = await executeQuery(query);
     res.status(201);
