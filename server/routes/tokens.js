@@ -50,11 +50,43 @@ router.post('/', async (req, res) => {
   res.send({"organization": organization, "token": new_token});
 });
 
+/* Delete a token. */
+router.delete('/:token', async (req, res) => {
+  const token = req.params.token;
+  let token_id = -1;
+  if (token) {
+    token_id = await check_token_existance(token);
+  }
+  console.log(token + " " + token_id);
+
+  if (token_id == -1) {
+    res.status(404);
+    res.send({code: 404, message: `Cannot locate token ${token} in our database.`});
+    return;
+  }
+
+  const result = await executeQuery(`DELETE FROM tokens WHERE id = ${token_id};`);
+  console.log('---',result);
+  res.status(200);
+  res.send({});
+});
+
 /* Checks if an organization exist within our Tokens table. */
 async function check_organizational_existance(org_name){
   const query = `SELECT token FROM tokens WHERE organization='${org_name}';`;
   const results = await executeQuery(query);
   return !results || !results[0] ? undefined : results[0].token;
+}
+
+/* Checks if an organization exist within our Tokens table. */
+async function check_token_existance(token) {
+  const query = `SELECT id FROM tokens WHERE token='${token}';`;
+  const results = await executeQuery(query);
+  try {
+    return results[0].id;
+  } catch (err) {
+    return -1;
+  }
 }
 
 module.exports = router;

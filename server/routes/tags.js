@@ -19,21 +19,23 @@ router.use('/', async (req, res, next) => {
 router.post('/:name', async (req, res) => {
   const tag_name = req.params.name;
   const interaction = req.query.interaction;
-  const value = req.query.value;
+  let value = req.query.value;
+  if (!value) value = '';
   const token_id = res.locals.token_id;
+  console.log(token_id);
   try {
-    var query = `INSERT IGNORE INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP());;`;
+    var query = `INSERT IGNORE INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP());`;
     var results = await executeQuery(query);
     var tag_id = results.insertId;
     /* Tag already exist so we need to obtain its 'id' to enter the new interaction. */
     if (tag_id == 0) {
-      query = `SELECT id FROM tags WHERE name='${tag_name}';`;
+      query = `SELECT id FROM tags WHERE name='${tag_name}' AND token_id = ${token_id};`;
       results = await executeQuery(query);
       tag_id = results[0].id;
-    }
 
-    // Update the tag value.
-    await executeQuery(`UPDATES tags SET value = '${value}' WHERE tag_id = ${tag_id};`);
+      // Update the tag value.
+      await executeQuery(`UPDATE tags SET value = '${value}' WHERE token_id = ${token_id};`);
+    }
 
     query = `INSERT INTO interactions (tag_id, action, time) VALUES ('${tag_id}', '${interaction}', CURRENT_TIMESTAMP());`;
     results = await executeQuery(query);

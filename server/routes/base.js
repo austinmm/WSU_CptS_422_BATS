@@ -17,7 +17,7 @@ function get_authorization_token(bearer_token) {
 
 /* Checks if an organization exist within our Tokens table. */
 async function check_token_existance(token) {
-  const query = `SELECT id FROM tokens WHERE token='${token}' LIMIT 1`;
+  const query = `SELECT id FROM tokens WHERE token='${token}';`;
   const results = await executeQuery(query);
   try {
     return results[0].id;
