@@ -16,13 +16,24 @@ Run "npm install" to download all necessary dependencies within the package.json
 Next, run "node app.js" to start up server
 
 ### Create a token
-POST 0.0.0.0:3000/api/tokens?organization=(organization_name)  (No body necessary)
+POST 0.0.0.0:3000/api/tokens/
+body:
+{
+	"organization": "company name"
+}
 
 ### Delete a token (and related tags and interactions)
 DELETE 0.0.0.0:3000/api/tokens/(token)
 
 ### Create/Update tag/interaction
-POST 0.0.0.0:3000/api/tags/(name)?interaction=(interaction_name)
+POST 0.0.0.0:3000/api/tags/
+body:
+{
+	"name": "tag name",
+	"value": "metadata",
+	"interaction": "interaction type"
+}
+
 
 ### View all interactions by name
 GET 0.0.0.0:3000/api/tags/(name)
