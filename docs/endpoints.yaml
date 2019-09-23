@@ -9,31 +9,30 @@ tags:
 - name: "tags"
   description: "Tag endpoints"
 paths:
-  /tokens/:
+  /tokens:
     post:
       tags:
       - "tokens"
       summary: "Create a new token"
-      parameters:
-      - in: "query"
-        name: "organization"
-        description: "Organization which requested to create the token"
+      requestBody:
         required: true
-        schema:
-          type: "string"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTokenBody'
       responses:
-        409:
-          description: "Token already created"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
         201:
           description: "Created"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/TokenInfo"
+        409:
+          description: "Token already created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         500:
           description: "Internal server error"
   /tokens/{token}:
@@ -93,6 +92,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        403:
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"      
         404:
           description: "Token not found"
           content:
@@ -165,19 +170,12 @@ paths:
       summary: "Create or update a tag and then add an interaction for the tag"
       security:
         - bearerAuth: []
-      parameters:
-      - in: "path"
-        name: "name"
-        description: "Tag name"
+      requestBody:
         required: true
-        schema:
-          type: "string"
-      - in: "query"
-        name: "interaction"
-        description: "Type of interaction"
-        required: true
-        schema:
-          type: "string"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTagBody'
       responses:
         201:
           description: "Created"
@@ -208,6 +206,24 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    CreateTokenBody:
+      type: "object"
+      properties:
+        organization:
+          type: "string"
+          example: "BATS"
+    UpdateTagBody:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "groups.group1"
+        value:
+          type: "string"
+          example: "Example Value"
+        interaction:
+          type: "string"
+          example: "ButtonClick"
     TokenInfo:
       type: "object"
       properties:
