@@ -13,7 +13,7 @@ const TOKENS_TABLE = `
 		organization VARCHAR(255) NOT NULL,
 		issued TIMESTAMP NOT NULL,
 		PRIMARY KEY (id),
-		INDEX (token)
+		UNIQUE KEY (token)
 	);
 `;
 
@@ -22,11 +22,12 @@ const TAGS_TABLE = `
 	CREATE TABLE IF NOT EXISTS tags (
 		id BIGINT NOT NULL AUTO_INCREMENT,
 		token_id BIGINT NOT NULL,
-		name VARCHAR(3072) NOT NULL UNIQUE,
+		name VARCHAR(1024) NOT NULL,
 		value TEXT NULL,
 		created TIMESTAMP NOT NULL,
 		PRIMARY KEY (id),
-		FOREIGN KEY (token_id) REFERENCES tokens (id) ON DELETE CASCADE
+		FOREIGN KEY (token_id) REFERENCES tokens (id) ON DELETE CASCADE,
+		UNIQUE KEY (name, token_id)
 	);
 `;
 
@@ -61,15 +62,17 @@ conn.connect(async err => {
 		console.error(`error connecting: ${err.stack}`);
 		return;
 	}
-	console.log(`connected as id ${conn.threadId}`);
-	
-	/*conn.query(`DROP DATABASE ${database_name};`, (err) => {
+	console.log(`connected to database as id ${conn.threadId}`);
+
+	/*
+	await conn.query(`DROP DATABASE ${database_name};`, (err) => {
 		if (err) console.log(err);
-	});*/
+	});
+	*/
 
 	/* Create the database if it does not exist. Note: options.database must be ommited to
 	   to run this step for the database to be created. */
-	conn.query(`CREATE DATABASE IF NOT EXISTS ${database_name};`, (err) => {
+	await conn.query(`CREATE DATABASE IF NOT EXISTS ${database_name};`, (err) => {
 		if (err) console.log(err);
 	});
 
@@ -79,6 +82,7 @@ conn.connect(async err => {
 			if (err) console.log(err);
 		});
 	}
+
 	/* Generate mock data.
 	const { generateMockData } = require('./mock');
 	generateMockData();
@@ -87,7 +91,7 @@ conn.connect(async err => {
 
 /* Helper function to execute queries. */
 db.executeQuery = (query, queryParams) => {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		conn.query(query, queryParams, (err, results) => {
 			if (err) console.log(err);
 			resolve(results);

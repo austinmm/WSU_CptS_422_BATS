@@ -1,7 +1,7 @@
 {
-  "name": "server",
+  "name": "bats",
   "version": "1.0.0",
-  "description": "A bash script to setup a simple template for starting projects, installing key npm packages, and running the server instantly on local port 3000 with examples",
+  "description": "BATS API server.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

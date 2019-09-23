@@ -1,21 +1,18 @@
-.Groups{
+.groups {
     background-color:azure;
     display: flex;
 }
 
-
-.group1, .group2{
-    
+.group1, .group2 {
     width: 36%;
     height: 200px;
     line-height: 1px;
     padding: 5%;
     margin: 2%;
     text-align: center;
-        
-    
 }
-.container{
+
+.container {
     position: relative;
     bottom: 20%;
     right: 7%;
@@ -27,13 +24,16 @@
     display: grid;
     text-align: center;
 }
-h1{
+
+h1 {
     text-align: center;
 }
-h2{
+
+h2 {
     position: relative;
-    bottom: 25%
+    bottom: 25%;
 }
-button{
-    margin: 10%
+
+button {
+    margin: 10%;
 }
