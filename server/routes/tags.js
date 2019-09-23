@@ -16,15 +16,16 @@ router.use('/', async (req, res, next) => {
 });
 
 /* User creates/updates a specific tag/interaction. */
-router.post('/:name', async (req, res) => {
-  const tag_name = req.params.name;
-  const interaction = req.query.interaction;
-  let value = req.query.value;
+router.post('/', async (req, res) => {
+  const tag_name = req.body.name;
+  const interaction = req.body.interaction;
+  const value = req.body.value;
   if (!value) value = '';
   const token_id = res.locals.token_id;
   console.log(token_id);
   try {
-    var query = `INSERT IGNORE INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP());`;
+    var query = `INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`
+    //var query = `INSERT IGNORE INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP());`;
     var results = await executeQuery(query);
     var tag_id = results.insertId;
     /* Tag already exist so we need to obtain its 'id' to enter the new interaction. */
