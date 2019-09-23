@@ -30,9 +30,9 @@
 <script type="text/javascript">
     function make_post(tag_name, interaction) {
         $.ajax({
-            url: `localhost:3000/api/tags/${tag_name}?interaction=${interaction}&value=Demo`,
+            url: `http://localhost:3000/api/tags/${tag_name}?interaction=${interaction}&value=Demo`,
             headers: {
-                'Authorization': `Bearer 056f9979-b5bb-4741-898f-80b432461e21`,
+                'Authorization': `Bearer 7edfa62b-0024-4f68-a2d4-d3319dfd6d2f`,
             },
             method: 'POST',
             success: function(resp) {
