@@ -14,7 +14,7 @@ chai.should();
 describe("Token Tests: ", () => {
 
     //Each route should have a describe wrapper
-    describe("/       (post)", () => {
+    describe("(post) /", () => {
         let executeQueryCount = 0;
 
         before(() => {
@@ -78,7 +78,7 @@ describe("Token Tests: ", () => {
         })
     })
     
-    describe("/:token (get)", () => {
+    describe("(get)  /:token", () => {
         let executeQueryCount = 0;
         before(() => {
             sinon.restore();
