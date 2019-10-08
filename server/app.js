@@ -47,5 +47,7 @@ app.listen(port, '0.0.0.0', () => {
     console.log(`\nServer is up and running!`);
     console.log(`The server will run as long as this process in this terminal\nis not interrupted`);
     console.log(`To kill server Press Ctrl-C or close the terminal`);
-    console.log(`Open a browser and enter 'localhost:${port}/' as the URL to view your server`);
+    console.log(`Open a browser and enter 'localhost:${port}/' as the URL to view your server\n\n\n`);
 });
+
+module.exports = app;
