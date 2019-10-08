@@ -109,6 +109,15 @@ describe("Token Tests: ", () => {
                     done();
                 })
         })
+
+        it("request info on token with status 404 from missing token", done => {
+            chai.request(app)
+                .get('/api/tokens/')
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                })
+        })
     })
 
 })
