@@ -26,14 +26,12 @@ body:
 DELETE 0.0.0.0:3000/api/tokens/(token)
 
 ### Create/Update tag/interaction
-POST 0.0.0.0:3000/api/tags/
+POST 0.0.0.0:3000/api/tags/(name)
 body:
 {
-	"name": "tag name",
 	"value": "metadata",
 	"interaction": "interaction type"
 }
-
 
 ### View all interactions by name
 GET 0.0.0.0:3000/api/tags/(name)

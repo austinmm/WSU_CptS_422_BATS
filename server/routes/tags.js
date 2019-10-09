@@ -16,8 +16,8 @@ router.use('/', async (req, res, next) => {
 });
 
 /* User creates/updates a specific tag/interaction. */
-router.post('/', async (req, res) => {
-  const tag_name = req.body.name;
+router.post('/:name', async (req, res) => {
+  const tag_name = req.params.name;
   const interaction = req.body.interaction;
   const value = req.body.value;
   if (!value) value = '';
