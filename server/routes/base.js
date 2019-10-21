@@ -6,16 +6,21 @@ const router = express.Router();
 
 //Checks if the request is made with a valid Bearer Auth'
 router.use("/", async (req, res, next) => {
-    const token = res.locals.token = get_authorization_token(req.headers.authorization);
-    if(token){
-      res.locals.token_id = router.check_token_existance(token);
+    res.locals.token = undefined;
+    res.locals.token_id = -1;
+    var token = router.get_authorization_token(req.headers.authorization);
+    //removes spaces from bearer auth
+    token = token.toString().split(' ').join('');
+    if(token && token.length > 0){
+      res.locals.token = token;
+      res.locals.token_id = await router.check_token_existance(token);
     }
     next();
-  });
+});
 
-  function get_authorization_token(bearer_token){
-    return !bearer_token? undefined: bearer_token.split(" ")[1];;
-  }
+router.get_authorization_token = function(bearer_token) {
+  return bearer_token && typeof(bearer_token) === 'string'? bearer_token.split(" ")[1]: "";
+}
 
   /* Checks if an organization exist within our Tokens table. */
 router.check_token_existance = async function(token) {
