@@ -1,13 +1,22 @@
 openapi: 3.0.0
 info:
   description: "Business Analytics Tracking Service"
-  version: "1.0.0"
+  version: "2.0.0"
   title: "B.A.T.S"
 tags:
 - name: "tokens"
   description: "Token endpoints"
 - name: "tags"
   description: "Tag endpoints"
+host: localhost:3000/
+schemes:
+  - http
+  - https
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
   /tokens:
     post:
@@ -76,13 +85,6 @@ paths:
       summary: "Delete token and related tags/interactions"
       security:
         - bearerAuth: []
-      parameters:
-      - in: "path"
-        name: "token"
-        description: "Token"
-        required: true
-        schema:
-          type: "string"
       responses:
         200:
           description: "Success"

@@ -7,7 +7,7 @@ router.use('/', async (req, res, next) => {
   if (!res.locals.token) {
     res.status(401);
     res.send({code: 401, message: 'No authentication provided.'});
-  } else if (res.locals.token_id == 0) {
+  } else if (res.locals.token_id == -1) {
     res.status(403);
     res.send({code: 403, message: 'Improper authentication provided.'});
   } else {
@@ -22,7 +22,6 @@ router.post('/:name', async (req, res) => {
   const value = req.body.value;
   if (!value) value = '';
   const token_id = res.locals.token_id;
-  console.log(token_id);
   try {
     var query = `INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`
     //var query = `INSERT IGNORE INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP());`;
