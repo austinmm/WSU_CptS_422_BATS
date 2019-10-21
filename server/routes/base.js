@@ -8,7 +8,7 @@ const router = express.Router();
 router.use("/", async (req, res, next) => {
     const token = res.locals.token = get_authorization_token(req.headers.authorization);
     if(token){
-      res.locals.token_id = await check_token_existance(token);
+      res.locals.token_id = router.check_token_existance(token);
     }
     next();
   });
@@ -16,17 +16,17 @@ router.use("/", async (req, res, next) => {
   function get_authorization_token(bearer_token){
     return !bearer_token? undefined: bearer_token.split(" ")[1];;
   }
-  
-  async function check_token_existance(token){
-    //This function is used to check if an organization exist within our Tokens table
-    const query = `SELECT * FROM tokens WHERE token='${token}' LIMIT 1`;
-    const results = await executeQuery(query); //Executes query
-    try{
-      return results[0].id;
-    }catch(err){
-      return 0;
-    }
+
+  /* Checks if an organization exist within our Tokens table. */
+router.check_token_existance = async function(token) {
+  const query = `SELECT id FROM tokens WHERE token='${token}' LIMIT 1`;
+  const results = await db.executeQuery(query);
+  try {
+    return results[0].id;
+  } catch (err) {
+    return -1;
   }
+}
 
   module.exports = router;
 

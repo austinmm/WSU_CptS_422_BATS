@@ -23,7 +23,10 @@ body:
 }
 
 ### Delete a token (and related tags and interactions)
-DELETE 0.0.0.0:3000/api/tokens/(token)
+DELETE 0.0.0.0:3000/api/tokens/
+headers: {
+    'Authorization': `Bearer 056f9979-b5bb-4741-898f-80b432461e21`,
+}
 
 ### Create/Update tag/interaction
 POST 0.0.0.0:3000/api/tags/(name)
@@ -32,20 +35,29 @@ body:
 	"value": "metadata",
 	"interaction": "interaction type"
 }
+headers: {
+    'Authorization': `Bearer 056f9979-b5bb-4741-898f-80b432461e21`,
+}
 
 ### View all interactions by name
 GET 0.0.0.0:3000/api/tags/(name)
+headers: {
+    'Authorization': `Bearer 056f9979-b5bb-4741-898f-80b432461e21`,
+}
 
 ### View all interactions
 GET 0.0.0.0:3000/api/tags
+headers: {
+    'Authorization': `Bearer 056f9979-b5bb-4741-898f-80b432461e21`,
+}
 
 ### Testing with website
 Open [frontend/index.html](frontend/index.html)
 and go ahead and click the sample buttons
 to check the database use View All Interactions route with the following header:
 headers: {
-                'Authorization': `Bearer 056f9979-b5bb-4741-898f-80b432461e21`,
-            }
+    'Authorization': `Bearer 056f9979-b5bb-4741-898f-80b432461e21`,
+}
 
 ## Team Members
 * Austin Marino
