@@ -10,7 +10,6 @@ const baseRouter = require('../routes/base');
 
 chai.use(chaiHttp);
 chai.should();
-//middle wear test: https://stackoverflow.com/questions/34516951/express-middleware-testing-mocha-chai
 //First Describe is the outer wrapper that holds all tests
 describe("Token Tests: ", () => {
 
@@ -22,8 +21,8 @@ describe("Token Tests: ", () => {
             sinon
                 .stub(mysql, "createConnection").callsFake( function() {
                     return {}
-                })
-            
+                }) 
+               
             //When we need execute query to return different values we will use a count
             //and a switch statement to ensure the proper resolve occurs.
             sinon
@@ -77,12 +76,16 @@ describe("Token Tests: ", () => {
                     done();
                 })
         })
+        after(()=>{
+            tokensRouter.check_organizational_existance.restore();
+            db.executeQuery.restore();
+            mysql.createConnection.restore();
+        })
     })
     
     describe("(get)  /:token", () => {
         let executeQueryCount = 0;
         before(() => {
-            sinon.restore();
             //When we need execute query to return different values we will use a count
             //and a switch statement to ensure the proper resolve occurs.
             sinon
@@ -119,22 +122,15 @@ describe("Token Tests: ", () => {
                     done();
                 })
         })
+
+        after(()=>{
+            db.executeQuery.restore();
+        })
     })
 
     describe("(delete) /", () => {
         let executeQueryCount = 0;
         before(() => {
-            sinon.restore();
-            
-            sinon
-                .stub(mysql, "createConnection").callsFake( function() {
-                    return {}
-                })
-            
-            sinon
-                .stub(baseRouter, "use").callsFake( function() {
-                    next();
-                })
             
             sinon
                 .stub(baseRouter, "get_authorization_token").callsFake( function() {
@@ -190,8 +186,6 @@ describe("Token Tests: ", () => {
                 .set('Authorization', 'Bearer authorized_token')
                 .end((err, res) => {
                     res.should.have.status(204);
-                    //assert.deepEqual(res.locals.token, 'authorized_token');
-                    //assert.deepEqual(res.locals.token_id, -1);
                     done();
                 })
         })
@@ -202,8 +196,6 @@ describe("Token Tests: ", () => {
                 .set('Authorization', 'Bearer authorized_token')
                 .end((err, res) => {
                     res.should.have.status(500);
-                    //assert.deepEqual(res.locals.token, 'authorized_token');
-                    //assert.deepEqual(res.locals.token_id, -1);
                     done();
                 })
         })
@@ -214,8 +206,6 @@ describe("Token Tests: ", () => {
                 .set('Authorization', 'Bearer unauthorized_token')
                 .end((err, res) => {
                     res.should.have.status(403);
-                    //assert.deepEqual(res.locals.token, 'unauthorized_token');
-                    //assert.deepEqual(res.locals.token_id, -1);
                     done();
                 })
         })
@@ -226,14 +216,18 @@ describe("Token Tests: ", () => {
                 .set('Authorization', 'Bearer ')
                 .end((err, res) => {
                     res.should.have.status(401);
-                    //assert.deepEqual(res.locals.token, undefined);
-                    //assert.deepEqual(res.locals.token_id, undefined);
                     done();
                 })
         })
 
         afterEach(() => {
             executeQueryCount++;
+        })
+
+        after(()=>{
+            db.executeQuery.restore();
+            baseRouter.check_token_existance.restore();
+            baseRouter.get_authorization_token.restore();
         })
     })
 
