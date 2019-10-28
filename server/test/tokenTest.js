@@ -10,7 +10,6 @@ const baseRouter = require('../routes/base');
 
 chai.use(chaiHttp);
 chai.should();
-//middle wear test: https://stackoverflow.com/questions/34516951/express-middleware-testing-mocha-chai
 //First Describe is the outer wrapper that holds all tests
 describe("Token Tests: ", () => {
 
@@ -22,8 +21,20 @@ describe("Token Tests: ", () => {
             sinon
                 .stub(mysql, "createConnection").callsFake( function() {
                     return {}
+                }) 
+              
+            sinon
+                .stub(baseRouter, "get_authorization_token").callsFake( function() {
+                    //Note: Promise objects do not work with strings
+                    return "authorized_token";
                 })
-            
+
+            sinon
+                .stub(baseRouter, "check_token_existance").callsFake( function() {
+                    return new Promise((resolve, reject) => {
+                        resolve(1);
+                    });
+                })
             //When we need execute query to return different values we will use a count
             //and a switch statement to ensure the proper resolve occurs.
             sinon
@@ -132,7 +143,7 @@ describe("Token Tests: ", () => {
                 })
             
             sinon
-                .stub(baseRouter, "use").callsFake( function() {
+                .stub(baseRouter, "middelware_authorization").callsFake( function() {
                     next();
                 })
             
