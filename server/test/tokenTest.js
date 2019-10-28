@@ -131,17 +131,6 @@ describe("Token Tests: ", () => {
     describe("(delete) /", () => {
         let executeQueryCount = 0;
         before(() => {
-            sinon.restore();
-            
-            sinon
-                .stub(mysql, "createConnection").callsFake( function() {
-                    return {}
-                })
-            
-            sinon
-                .stub(baseRouter, "middelware_authorization").callsFake( function() {
-                    next();
-                })
             
             sinon
                 .stub(baseRouter, "get_authorization_token").callsFake( function() {
@@ -197,8 +186,6 @@ describe("Token Tests: ", () => {
                 .set('Authorization', 'Bearer authorized_token')
                 .end((err, res) => {
                     res.should.have.status(204);
-                    //assert.deepEqual(res.locals.token, 'authorized_token');
-                    //assert.deepEqual(res.locals.token_id, -1);
                     done();
                 })
         })
@@ -209,8 +196,6 @@ describe("Token Tests: ", () => {
                 .set('Authorization', 'Bearer authorized_token')
                 .end((err, res) => {
                     res.should.have.status(500);
-                    //assert.deepEqual(res.locals.token, 'authorized_token');
-                    //assert.deepEqual(res.locals.token_id, -1);
                     done();
                 })
         })
@@ -221,8 +206,6 @@ describe("Token Tests: ", () => {
                 .set('Authorization', 'Bearer unauthorized_token')
                 .end((err, res) => {
                     res.should.have.status(403);
-                    //assert.deepEqual(res.locals.token, 'unauthorized_token');
-                    //assert.deepEqual(res.locals.token_id, -1);
                     done();
                 })
         })
@@ -233,8 +216,6 @@ describe("Token Tests: ", () => {
                 .set('Authorization', 'Bearer ')
                 .end((err, res) => {
                     res.should.have.status(401);
-                    //assert.deepEqual(res.locals.token, undefined);
-                    //assert.deepEqual(res.locals.token_id, undefined);
                     done();
                 })
         })
@@ -244,9 +225,7 @@ describe("Token Tests: ", () => {
         })
 
         after(()=>{
-            baseRouter.middelware_authorization.restore();
             db.executeQuery.restore();
-            mysql.createConnection.restore();
             baseRouter.check_token_existance.restore();
             baseRouter.get_authorization_token.restore();
         })
