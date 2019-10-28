@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const uuid = require('uuidv4').default;
 const db = require('../lib/db');
-// const { executeQuery } = require('../lib/db');
 
 /* Returns the information of a specific token entity. */
 router.get('/:token', async (req, res) => {
