@@ -22,19 +22,7 @@ describe("Token Tests: ", () => {
                 .stub(mysql, "createConnection").callsFake( function() {
                     return {}
                 }) 
-              
-            sinon
-                .stub(baseRouter, "get_authorization_token").callsFake( function() {
-                    //Note: Promise objects do not work with strings
-                    return "authorized_token";
-                })
-
-            sinon
-                .stub(baseRouter, "check_token_existance").callsFake( function() {
-                    return new Promise((resolve, reject) => {
-                        resolve(1);
-                    });
-                })
+               
             //When we need execute query to return different values we will use a count
             //and a switch statement to ensure the proper resolve occurs.
             sinon
@@ -88,12 +76,16 @@ describe("Token Tests: ", () => {
                     done();
                 })
         })
+        after(()=>{
+            tokensRouter.check_organizational_existance.restore();
+            db.executeQuery.restore();
+            mysql.createConnection.restore();
+        })
     })
     
     describe("(get)  /:token", () => {
         let executeQueryCount = 0;
         before(() => {
-            sinon.restore();
             //When we need execute query to return different values we will use a count
             //and a switch statement to ensure the proper resolve occurs.
             sinon
@@ -129,6 +121,10 @@ describe("Token Tests: ", () => {
                     res.should.have.status(404);
                     done();
                 })
+        })
+
+        after(()=>{
+            db.executeQuery.restore();
         })
     })
 
@@ -245,6 +241,14 @@ describe("Token Tests: ", () => {
 
         afterEach(() => {
             executeQueryCount++;
+        })
+
+        after(()=>{
+            baseRouter.middelware_authorization.restore();
+            db.executeQuery.restore();
+            mysql.createConnection.restore();
+            baseRouter.check_token_existance.restore();
+            baseRouter.get_authorization_token.restore();
         })
     })
 
