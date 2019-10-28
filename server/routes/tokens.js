@@ -53,18 +53,24 @@ router.post('/', async (req, res) => {
 
 /* Delete a token. */
 router.delete('/', async (req, res) => {
-  const token = res.locals.token;
-  const token_id = res.locals.token_id;
-  if (token_id == -1) {
-    res.status(404);
-    res.send({code: 404, message: `Cannot locate token ${token} in our database.`});
-    return;
+  if (res.locals.token === undefined) {
+    res.status(401);
+    res.send({code: 401, message: 'No authentication provided.'});
+  } 
+  else if (res.locals.token_id == -1) {
+    res.status(403);
+    res.send({code: 403, message: 'Improper authentication provided.'});
   }
-
-  const result = await db.executeQuery(`DELETE FROM tokens WHERE id = ${token_id};`);
-  console.log('---',result);
-  res.status(200);
-  res.send({});
+  // True if successful, Flase if not
+  const result = await db.executeQuery(`DELETE FROM tokens WHERE id = ${res.locals.token_id};`);
+  if (result){
+    res.status(204);
+    res.send();
+  }
+  else{
+    res.status(500);
+    res.send("Error: Unable to delete your account.");
+  }
 });
 
 /* Checks if an organization exist within our Tokens table. */

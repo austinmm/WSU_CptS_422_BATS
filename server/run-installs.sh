@@ -15,6 +15,10 @@ download_packages () {
   npm install path --save
   npm install cookie-parser --save
   npm install mysql --save
+  npm install mocha --save
+  npm install chai --save
+  npm install sinon --save
+  npm install chai-http --save
 }
 
 mysql_instr () {

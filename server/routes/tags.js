@@ -4,7 +4,7 @@ const { executeQuery } = require('../lib/db');
 
 /* Checks that all 'api/tag' request are made with the Bearer Auth. */
 router.use('/', async (req, res, next) => {
-  if (!res.locals.token) {
+  if (res.locals.token == undefined) {
     res.status(401);
     res.send({code: 401, message: 'No authentication provided.'});
   } else if (res.locals.token_id == -1) {
