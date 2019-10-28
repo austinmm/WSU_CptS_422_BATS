@@ -13,8 +13,9 @@ router.middelware_authorization = function(req, res, next) {
   token = token.toString().split(' ').join('');
   if(token && token.length > 0){
     res.locals.token = token;
-    router.check_token_existance(token).then((return_val) => {
-      res.locals.token_id = return_val;
+    router.check_token_existance(token).then(response => {
+      console.log("***** Response: " + response);
+      res.locals.token_id = response;
     });
   }
   next();
