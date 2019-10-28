@@ -21,23 +21,6 @@ describe("Base Tests: ", () => {
         var executeQueryCount = 0;
 
         before(() => {
-            /*
-            sinon
-                .stub(db, "executeQuery").callsFake( function() {
-                    return new Promise((resolve, reject) => {
-                        switch(executeQueryCount){ 
-                            case 0:
-                                resolve([{id: 1}]);
-                            case 1:
-                                resolve([{id: -1}]);
-                            case 2:
-                                resolve([{id: -1}]);
-                            case 3:
-                                resolve([{id: -1}]);
-                        }
-                    });
-                })
-            */
             sinon
                 .stub(baseRouter, "check_token_existance").callsFake( function() {
                     return new Promise((resolve, reject) => {
@@ -51,7 +34,6 @@ describe("Base Tests: ", () => {
                         }
                     });
                 })
-            
         })
 
         it('Authorized Token and Valid Token Id', done => {
@@ -95,7 +77,6 @@ describe("Base Tests: ", () => {
         
         after(()=>{
             baseRouter.check_token_existance.restore();
-            // db.executeQuery.restore();
         })
 
         afterEach(() => {
@@ -104,13 +85,3 @@ describe("Base Tests: ", () => {
     })
 
 });
-/*
-after(()=>{
-    tokensRouter.check_organizational_existance.restore();
-    baseRouter.middelware_authorization.restore();
-    db.executeQuery.restore();
-    mysql.createConnection.restore();
-    baseRouter.check_token_existance.restore();
-    baseRouter.get_authorization_token.restore();
-})
-*/
