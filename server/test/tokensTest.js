@@ -95,7 +95,7 @@ describe("Token Router Tests: ", () => {
                 });
             });
 
-            sinon.stub(tokensRouter, "check_organizational_existance").callsFake(() => {
+            sinon.stub(tokensRouter, "check_organizational_existence").callsFake(() => {
                 return new Promise((resolve) => {
                     switch (executeQueryCount) {
                         case 0:
@@ -130,7 +130,7 @@ describe("Token Router Tests: ", () => {
         });
 
         after(() => {
-            tokensRouter.check_organizational_existance.restore();
+            tokensRouter.check_organizational_existence.restore();
             db.executeQuery.restore();
             mysql.createConnection.restore();
         });
@@ -204,7 +204,7 @@ describe("Token Router Tests: ", () => {
                 }
             });
 
-            sinon.stub(baseRouter, "check_token_existance").callsFake(() => {
+            sinon.stub(baseRouter, "check_token_existence").callsFake(() => {
                 return new Promise((resolve) => {
                     switch (executeQueryCount) {
                         case 0:
@@ -281,7 +281,7 @@ describe("Token Router Tests: ", () => {
 
         after(() => {
             db.executeQuery.restore();
-            baseRouter.check_token_existance.restore();
+            baseRouter.check_token_existence.restore();
             baseRouter.get_authorization_token.restore();
             mysql.createConnection.restore();
         });
@@ -356,21 +356,21 @@ describe("Token Router Tests: ", () => {
         });
 
         it("no db results", (done) => {
-            tokensRouter.check_organizational_existance('org name').then((res) => {
+            tokensRouter.check_organizational_existence('org name').then((res) => {
                 assert.equal(res, undefined);
                 done();
             });
         });
 
         it("empty db results", (done) => {
-            tokensRouter.check_organizational_existance('org name').then((res) => {
+            tokensRouter.check_organizational_existence('org name').then((res) => {
                 assert.equal(res, undefined);
                 done();
             });
         });
 
         it("token found", (done) => {
-            tokensRouter.check_organizational_existance('org name').then((res) => {
+            tokensRouter.check_organizational_existence('org name').then((res) => {
                 assert.equal(res, '7edfa62b-0024-4f68-a2d4-d3319dfd6d2f');
                 done();
             });

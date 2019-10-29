@@ -54,7 +54,7 @@ describe("Tag Router Tests: ", () => {
             sinon.stub(baseRouter, "get_authorization_token").callsFake(() =>
                 "Bearer auth_token");
 
-            sinon.stub(baseRouter, "check_token_existance").callsFake(() => {
+            sinon.stub(baseRouter, "check_token_existence").callsFake(() => {
                 return new Promise((resolve) => {
                     resolve(1);
                 });
@@ -97,7 +97,7 @@ describe("Tag Router Tests: ", () => {
 
         after(() => {
             baseRouter.get_authorization_token.restore();
-            baseRouter.check_token_existance.restore();
+            baseRouter.check_token_existence.restore();
             db.executeQuery.restore();
             mysql.createConnection.restore();
         });
