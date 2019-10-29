@@ -4,11 +4,13 @@ const sinon = require('sinon');
 const chaiHttp = require('chai-http');
 
 const app = require('../app');
-const db = require('../lib/db');
 const mysql = require('mysql');
+const db = require('../lib/db');
+
 const baseRouter = require('../routes/base');
 
 chai.use(chaiHttp);
+chai.should();
 
 describe("Tag Router Tests: ", () => {
     describe("(post) /:name", () => {
