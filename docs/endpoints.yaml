@@ -99,7 +99,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"      
+                $ref: "#/components/schemas/Error"
         404:
           description: "Token not found"
           content:
@@ -199,8 +199,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-        500:
-          description: "Internal server error"
 components:
   securitySchemes:
     bearerAuth:
