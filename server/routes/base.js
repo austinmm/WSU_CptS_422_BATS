@@ -1,6 +1,6 @@
 const express = require('express');
 const moment = require('moment');
-const { executeQuery } = require('../lib/db');
+const db = require('../lib/db');
 const router = express.Router();
 
 //Checks if the request is made with a valid Bearer Auth'
