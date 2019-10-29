@@ -137,4 +137,42 @@ describe("Base Tests: ", () => {
             mysql.createConnection.restore();
         });
     });
+
+    describe("get_authorization_token", () => {
+
+        it("Valid Bearer Token", (done) => {
+            let bearer_token = "Bearer 7edfa62b-0024-4f68-a2d4-d3319dfd6d2f";
+            let token = baseRouter.get_authorization_token(bearer_token);
+            assert.equal(token, '7edfa62b-0024-4f68-a2d4-d3319dfd6d2f');
+            done();
+        });
+
+        it("Token w/out Bearer Auth", (done) => {
+            let bearer_token = "7edfa62b-0024-4f68-a2d4-d3319dfd6d2f";
+            let token = baseRouter.get_authorization_token(bearer_token);
+            assert.equal(token, '');
+            done();
+        });
+
+        it("No Authorization in any form", (done) => {
+            let bearer_token = "";
+            let token = baseRouter.get_authorization_token(bearer_token);
+            assert.equal(token, '');
+            done();
+        });
+
+        it("Undefined Authorization", (done) => {
+            let bearer_token = undefined;
+            let token = baseRouter.get_authorization_token(bearer_token);
+            assert.equal(token, '');
+            done();
+        });
+
+        it("Invalid Authorization Type", (done) => {
+            let bearer_token = {"User": "username", "Password": "pasword123"};
+            let token = baseRouter.get_authorization_token(bearer_token);
+            assert.equal(token, '');
+            done();
+        });
+    });
 });
