@@ -16,12 +16,65 @@ chai.should();
 describe("Token Router Tests: ", () => {
 
     //Each route should have a describe wrapper
+    describe("(get)  /", () => {
+        let executeQueryCount = 0;
+
+        before(() => {
+            sinon.stub(mysql, "createConnection").callsFake(() => {
+                return {};
+            });
+            //When we need execute query to return different values we will use a count
+            //and a switch statement to ensure the proper resolve occurs.
+            sinon.stub(db, "executeQuery").callsFake(() => {
+                return new Promise((resolve) => {
+                    switch (executeQueryCount) {
+                        case 0:
+                            resolve([{token: '7edfa62b-0024-4f68-a2d4-d3319dfd6d2f', organization: "TestOrg", issued: "SomeDate"}]);
+                        case 1:
+                            resolve([]);
+                    }
+                });
+            });
+        });
+
+        it("request a list of all tokens", done => {
+            chai.request(app)
+                .get('/api/tokens')
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    assert.equal(res.body.length, 1);
+                    assert.equal(res.body[0].token, "7edfa62b-0024-4f68-a2d4-d3319dfd6d2f");
+                    assert.equal(res.body[0].organization, "TestOrg");
+                    assert.equal(res.body[0].issued, "SomeDate");
+                    done();
+                });
+        });
+
+        it("no tokens found", done => {
+            chai.request(app)
+                .get('/api/tokens')
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+
+        afterEach(() => {
+            executeQueryCount++;
+        });
+
+        after(() => {
+            db.executeQuery.restore();
+            mysql.createConnection.restore();
+        });
+    });
+
     describe("(post) /", () => {
         let executeQueryCount = 0;
 
         before(() => {
             sinon.stub(mysql, "createConnection").callsFake(() => {
-                return {}
+                return {};
             });
 
             //When we need execute query to return different values we will use a count
@@ -86,6 +139,9 @@ describe("Token Router Tests: ", () => {
     describe("(get)  /:token", () => {
         let executeQueryCount = 0;
         before(() => {
+            sinon.stub(mysql, "createConnection").callsFake(() => {
+                return {};
+            });
             //When we need execute query to return different values we will use a count
             //and a switch statement to ensure the proper resolve occurs.
             sinon.stub(db, "executeQuery").callsFake(() => {
@@ -124,12 +180,16 @@ describe("Token Router Tests: ", () => {
 
         after(() => {
             db.executeQuery.restore();
+            mysql.createConnection.restore();
         });
     });
 
     describe("(delete) /", () => {
         let executeQueryCount = 0;
         before(() => {
+            sinon.stub(mysql, "createConnection").callsFake(() => {
+                return {};
+            });
             sinon.stub(baseRouter, "get_authorization_token").callsFake(() => {
                 //Note: Promise objects do not work with strings
                 switch (executeQueryCount) {
@@ -155,7 +215,7 @@ describe("Token Router Tests: ", () => {
                             resolve(-1);
                         case 3:
                             resolve(-1);
-                    }
+                    };
                 });
             });
 
@@ -223,12 +283,16 @@ describe("Token Router Tests: ", () => {
             db.executeQuery.restore();
             baseRouter.check_token_existance.restore();
             baseRouter.get_authorization_token.restore();
+            mysql.createConnection.restore();
         });
     });
 
     describe("(get)  /:token", () => {
         let executeQueryCount = 0;
         before(() => {
+            sinon.stub(mysql, "createConnection").callsFake(() => {
+                return {};
+            });
             //When we need execute query to return different values we will use a count
             //and a switch statement to ensure the proper resolve occurs.
             sinon.stub(db, "executeQuery").callsFake(() => {
@@ -267,12 +331,16 @@ describe("Token Router Tests: ", () => {
 
         after(() => {
             db.executeQuery.restore();
+            mysql.createConnection.restore();
         });
     });
 
     describe("check_organizational_existence", () => {
         let executeQueryCount = 0;
         before(() => {
+            sinon.stub(mysql, "createConnection").callsFake(() => {
+                return {};
+            });
             sinon.stub(db, "executeQuery").callsFake(() => {
                 return new Promise((resolve) => {
                     switch (executeQueryCount) {
@@ -314,6 +382,7 @@ describe("Token Router Tests: ", () => {
 
         after(() => {
             db.executeQuery.restore();
+            mysql.createConnection.restore();
         });
     });
 });
