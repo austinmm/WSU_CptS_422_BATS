@@ -1,10 +1,10 @@
-var chai = require('chai');
-var assert = require('chai').assert;
-var sinon = require('sinon');
-var chaiHttp = require('chai-http');
-var db = require('../lib/db');
+const chai = require('chai');
+const assert = chai.assert;
+const sinon = require('sinon');
+const chaiHttp = require('chai-http');
+const db = require('../lib/db');
 const baseRouter = require('../routes/base');
-var httpMocks = require('node-mocks-http');
+const httpMocks = require('node-mocks-http');
 
 chai.use(chaiHttp);
 chai.should();
@@ -18,28 +18,30 @@ describe("Base Tests: ", () => {
 
     //Each route should have a describe wrapper
     describe("(get) /", () => {
-        var executeQueryCount = 0;
+        let executeQueryCount = 0;
 
         before(() => {
-            sinon
-                .stub(baseRouter, "check_token_existence").callsFake( function() {
-                    return new Promise((resolve, reject) => {
-                        switch(executeQueryCount){ 
-                            case 0:
-                                resolve(1);
-                            case 1:
-                                resolve(-1);
-                            case 2:
-                                resolve(-1);
-                        }
-                    });
-                })
-        })
+            sinon.stub(baseRouter, "check_token_existence").callsFake(() => {
+                return new Promise((resolve) => {
+                    switch (executeQueryCount) {
+                        case 0:
+                            resolve(1);
+                            break;
+                        case 1:
+                            resolve(-1);
+                            break;
+                        case 2:
+                            resolve(-1);
+                            break;
+                    }
+                });
+            });
+        });
 
         it('Authorized Token and Valid Token Id', done => {
-            var req = httpMocks.createRequest({headers: {authorization: 'Bearer authorized_token'}});
-            var res = httpMocks.createResponse();
-            baseRouter.middelware_authorization(req, res, function(){
+            const req = httpMocks.createRequest({headers: {authorization: 'Bearer authorized_token'}});
+            const res = httpMocks.createResponse();
+            baseRouter.middelware_authorization(req, res, () => {
                 // There is a async function call in the middleware so we must wait for that to finish
                 sleep(500).then(() => {
                     assert.equal(res.locals.token, 'authorized_token');
@@ -47,12 +49,12 @@ describe("Base Tests: ", () => {
                     done();
                 });
             })
-        })
+        });
 
         it('Unauthorized Token and Invalid Token Id', done => {
-            var req = httpMocks.createRequest({headers: {authorization: 'Bearer unauthorized_token'}});
-            var res = httpMocks.createResponse();
-            baseRouter.middelware_authorization(req, res, function(){
+            const req = httpMocks.createRequest({headers: {authorization: 'Bearer unauthorized_token'}});
+            const res = httpMocks.createResponse();
+            baseRouter.middelware_authorization(req, res, () => {
                // There is a async function call in the middleware so we must wait for that to finish
                sleep(500).then(() => {
                 assert.equal(res.locals.token, 'unauthorized_token');
@@ -60,12 +62,12 @@ describe("Base Tests: ", () => {
                 done();
                 });
             });
-        })
+        });
 
         it('No Token and Invalid Token Id', done => {
-            var req = httpMocks.createRequest({headers: {authorization: ''}});
-            var res = httpMocks.createResponse();
-            baseRouter.middelware_authorization(req, res, function(){
+            const req = httpMocks.createRequest({headers: {authorization: ''}});
+            const res = httpMocks.createResponse();
+            baseRouter.middelware_authorization(req, res, () => {
                 // There is a async function call in the middleware so we must wait for that to finish
                 sleep(500).then(() => {
                     assert.equal(res.locals.token, undefined);
@@ -73,16 +75,16 @@ describe("Base Tests: ", () => {
                     done();
                 });
             });
-        })
-
-        after(()=>{
-            baseRouter.check_token_existence.restore();
-        })
+        });
 
         afterEach(() => {
             executeQueryCount++;
-        })
-    })
+        });
+
+        after(() => {
+            baseRouter.check_token_existence.restore();
+        });
+    });
 
     describe("check_token_existence", () => {
         let executeQueryCount = 0;
@@ -97,9 +99,6 @@ describe("Base Tests: ", () => {
                             resolve([undefined]);
                             break;
                         case 2:
-                            resolve([{}]);
-                            break;
-                        case 3:
                             resolve([{id: 1}]);
                             break;
                     }
@@ -115,13 +114,6 @@ describe("Base Tests: ", () => {
         });
 
         it("empty db results", (done) => {
-            baseRouter.check_token_existence('7edfa62b-0024-4f68-a2d4-d3319dfd6d2f').then((res) => {
-                assert.equal(res, -1);
-                done();
-            });
-        });
-
-        it("no id value found", (done) => {
             baseRouter.check_token_existence('7edfa62b-0024-4f68-a2d4-d3319dfd6d2f').then((res) => {
                 assert.equal(res, -1);
                 done();
