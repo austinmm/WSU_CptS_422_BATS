@@ -3,7 +3,6 @@ const moment = require('moment');
 const { executeQuery } = require('../lib/db');
 const router = express.Router();
 
-
 //Checks if the request is made with a valid Bearer Auth'
 router.middelware_authorization = function(req, res, next) {
   res.locals.token = undefined;
@@ -13,8 +12,7 @@ router.middelware_authorization = function(req, res, next) {
   token = token.toString().split(' ').join('');
   if(token && token.length > 0){
     res.locals.token = token;
-    router.check_token_existance(token).then(response => {
-      console.log("***** Response: " + response);
+    router.check_token_existence(token).then(response => {
       res.locals.token_id = response;
     });
   }
@@ -27,7 +25,7 @@ router.get_authorization_token = function(bearer_token) {
 }
 
 /* Checks if an organization exist within our Tokens table. */
-router.check_token_existance = async function(token) {
+router.check_token_existence = async function(token) {
   const query = `SELECT id FROM tokens WHERE token='${token}' LIMIT 1`;
   const results = await db.executeQuery(query);
   try {

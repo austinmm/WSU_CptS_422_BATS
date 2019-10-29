@@ -148,7 +148,7 @@ describe("Token Tests: ", () => {
                 })
             
             sinon
-                .stub(baseRouter, "check_token_existance").callsFake( function() {
+                .stub(baseRouter, "check_token_existence").callsFake( function() {
                     return new Promise((resolve, reject) => {
                         switch(executeQueryCount){ 
                             case 0:
@@ -226,7 +226,7 @@ describe("Token Tests: ", () => {
 
         after(()=>{
             db.executeQuery.restore();
-            baseRouter.check_token_existance.restore();
+            baseRouter.check_token_existence.restore();
             baseRouter.get_authorization_token.restore();
         })
     })
