@@ -51,11 +51,8 @@ describe("Tag Router Tests: ", () => {
                 });
             });
 
-            sinon.stub(baseRouter, "get_authorization_token").callsFake(() => {
-                return new Promise((resolve) => {
-                    resolve("Bearer auth_token");
-                });
-            });
+            sinon.stub(baseRouter, "get_authorization_token").callsFake(() =>
+                "Bearer auth_token");
 
             sinon.stub(baseRouter, "check_token_existance").callsFake(() => {
                 return new Promise((resolve) => {

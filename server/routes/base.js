@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../lib/db');
 
 //Checks if the request is made with a valid Bearer Auth'
 router.middelware_authorization = async (req, res, next) => {
