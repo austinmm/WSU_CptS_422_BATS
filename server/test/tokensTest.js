@@ -2,10 +2,11 @@ const chai = require('chai');
 const assert = chai.assert;
 const sinon = require('sinon');
 const chaiHttp = require('chai-http');
+
 const app = require('../app');
+const mysql = require('mysql');
 const db = require('../lib/db');
 
-const mysql = require('mysql');
 const tokensRouter = require('../routes/tokens');
 const baseRouter = require('../routes/base');
 
@@ -14,7 +15,6 @@ chai.should();
 
 //First Describe is the outer wrapper that holds all tests
 describe("Token Router Tests: ", () => {
-
     //Each route should have a describe wrapper
     describe("(get)  /", () => {
         let executeQueryCount = 0;
@@ -23,6 +23,7 @@ describe("Token Router Tests: ", () => {
             sinon.stub(mysql, "createConnection").callsFake(() => {
                 return {};
             });
+
             //When we need execute query to return different values we will use a count
             //and a switch statement to ensure the proper resolve occurs.
             sinon.stub(db, "executeQuery").callsFake(() => {

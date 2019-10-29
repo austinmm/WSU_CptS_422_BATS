@@ -2,9 +2,18 @@ const chai = require('chai');
 const assert = chai.assert;
 const sinon = require('sinon');
 const chaiHttp = require('chai-http');
-const db = require('../lib/db');
-const baseRouter = require('../routes/base');
 const httpMocks = require('node-mocks-http');
+
+const mysql = require('mysql');
+/* baseTest.js is ran first, so mock out the initial mysql connect() function
+   before importing the db to prevent connection attempts to a MySQL database.
+*/
+sinon.stub(mysql, "createConnection").callsFake(() => {
+    return {connect: () => {}};
+});
+const db = require('../lib/db');
+
+const baseRouter = require('../routes/base');
 
 chai.use(chaiHttp);
 chai.should();
@@ -12,10 +21,6 @@ chai.should();
 //middle wear test: https://stackoverflow.com/questions/34516951/express-middleware-testing-mocha-chai
 //First Describe is the outer wrapper that holds all tests
 describe("Base Tests: ", () => {
-    const sleep = (milliseconds) => {
-        return new Promise(resolve => setTimeout(resolve, milliseconds))
-    }
-
     //Each route should have a describe wrapper
     describe("(get) /", () => {
         let executeQueryCount = 0;
@@ -42,12 +47,9 @@ describe("Base Tests: ", () => {
             const req = httpMocks.createRequest({headers: {authorization: 'Bearer authorized_token'}});
             const res = httpMocks.createResponse();
             baseRouter.middelware_authorization(req, res, () => {
-                // There is a async function call in the middleware so we must wait for that to finish
-                sleep(500).then(() => {
-                    assert.equal(res.locals.token, 'authorized_token');
-                    assert.equal(res.locals.token_id, 1);
-                    done();
-                });
+                assert.equal(res.locals.token, 'authorized_token');
+                assert.equal(res.locals.token_id, 1);
+                done();
             })
         });
 
@@ -55,12 +57,9 @@ describe("Base Tests: ", () => {
             const req = httpMocks.createRequest({headers: {authorization: 'Bearer unauthorized_token'}});
             const res = httpMocks.createResponse();
             baseRouter.middelware_authorization(req, res, () => {
-               // There is a async function call in the middleware so we must wait for that to finish
-               sleep(500).then(() => {
                 assert.equal(res.locals.token, 'unauthorized_token');
                 assert.equal(res.locals.token_id, -1);
                 done();
-                });
             });
         });
 
@@ -68,12 +67,9 @@ describe("Base Tests: ", () => {
             const req = httpMocks.createRequest({headers: {authorization: ''}});
             const res = httpMocks.createResponse();
             baseRouter.middelware_authorization(req, res, () => {
-                // There is a async function call in the middleware so we must wait for that to finish
-                sleep(500).then(() => {
-                    assert.equal(res.locals.token, undefined);
-                    assert.equal(res.locals.token_id, -1);
-                    done();
-                });
+                assert.equal(res.locals.token, undefined);
+                assert.equal(res.locals.token_id, -1);
+                done();
             });
         });
 
@@ -83,12 +79,17 @@ describe("Base Tests: ", () => {
 
         after(() => {
             baseRouter.check_token_existence.restore();
+            mysql.createConnection.restore();
         });
     });
 
     describe("check_token_existence", () => {
         let executeQueryCount = 0;
         before(() => {
+            sinon.stub(mysql, "createConnection").callsFake(() => {
+                return {};
+            });
+
             sinon.stub(db, "executeQuery").callsFake(() => {
                 return new Promise((resolve) => {
                     switch (executeQueryCount) {
@@ -133,6 +134,7 @@ describe("Base Tests: ", () => {
 
         after(() => {
             db.executeQuery.restore();
+            mysql.createConnection.restore();
         });
     });
 });

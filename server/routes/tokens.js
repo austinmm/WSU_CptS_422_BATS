@@ -55,7 +55,7 @@ router.delete('/', async (req, res) => {
   if (res.locals.token === undefined) {
     res.status(401);
     res.send({code: 401, message: 'No authentication provided.'});
-  } 
+  }
   else if (res.locals.token_id == -1) {
     res.status(403);
     res.send({code: 403, message: 'Improper authentication provided.'});
@@ -68,7 +68,7 @@ router.delete('/', async (req, res) => {
   }
   else{
     res.status(500);
-    res.send("Error: Unable to delete your account.");
+    res.send();
   }
 });
 
