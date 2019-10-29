@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const organization = req.body.organization;
   /* Checks and handles if the organization making the post request already has an existing token/account with us. */
-  const org_token = await router.check_organizational_existance(organization);
+  const org_token = await router.check_organizational_existence(organization);
   if (org_token) {
     res.status(409); // 409 conflict error
     res.send({code: 409, message: `Your organization, ${organization}, already has an account.`});
@@ -73,7 +73,7 @@ router.delete('/', async (req, res) => {
 });
 
 /* Checks if an organization exist within our Tokens table. */
-router.check_organizational_existance = async function (org_name){
+router.check_organizational_existence = async function (org_name){
   const query = `SELECT token FROM tokens WHERE organization='${org_name}';`;
   const results = await db.executeQuery(query);
   return !results || !results[0] ? undefined : results[0].token;
