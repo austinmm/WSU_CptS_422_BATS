@@ -104,9 +104,9 @@ describe("Tag Router Tests: ", () => {
             mysql.createConnection.restore();
         });
     });
-    
-    //testing all tags
-        describe("(get) /", () => {
+
+    //testing a specific tag
+    describe("(get) /:name", () => {
         let executeQueryCount = 0;
 
         before(() => {
@@ -116,7 +116,6 @@ describe("Tag Router Tests: ", () => {
 
             sinon.stub(db, "executeQuery").callsFake(() => {
                 return new Promise((resolve) => {
-                    
                     switch (executeQueryCount) {
                         case 0:
                             resolve([{token_id: 12, name: "Test", created: "SomeDate"}]);
@@ -125,7 +124,68 @@ describe("Tag Router Tests: ", () => {
                     }
                 });
             });
-            
+            sinon.stub(baseRouter, "get_authorization_token").callsFake(() =>
+                "Bearer auth_token");
+
+            sinon.stub(baseRouter, "check_token_existence").callsFake(() => {
+                return new Promise((resolve) => {
+                    resolve(1);
+                });
+            });
+        });
+
+        it("request info on tag with status 200", (done) => {
+            chai.request(app)
+                .get('/api/tags/Testing1234')
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    assert.equal(res.body[0].name, "Test");
+                    assert.equal(res.body[0].token_id, 12);
+                    assert.equal(res.body[0].created, "SomeDate");
+                    done();
+                });
+        });
+
+        it("request info on tag with status 404", done => {
+            chai.request(app)
+                .get('/api/tags')
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    done();
+                });
+        });
+
+        afterEach(() => {
+            executeQueryCount++;
+        });
+
+        after(() => {
+            baseRouter.get_authorization_token.restore();
+            baseRouter.check_token_existence.restore();
+            db.executeQuery.restore();
+            mysql.createConnection.restore();
+        });
+    });
+
+    //testing all tags
+    describe("(get) /", () => {
+        let executeQueryCount = 0;
+
+        before(() => {
+            sinon.stub(mysql, "createConnection").callsFake(() => {
+                return {};
+            });
+
+            sinon.stub(db, "executeQuery").callsFake(() => {
+                return new Promise((resolve) => {
+                    switch (executeQueryCount) {
+                        case 0:
+                            resolve([{token_id: 12, name: "Test", created: "SomeDate"}]);
+                        case 1:
+                            resolve([]);
+                    }
+                });
+            });
             sinon.stub(baseRouter, "get_authorization_token").callsFake(() =>
                 "Bearer auth_token");
 
@@ -147,7 +207,7 @@ describe("Tag Router Tests: ", () => {
                     done();
                 });
         });
-            
+
         it("no tags found", done => {
             chai.request(app)
                 .get('/api/tags')
