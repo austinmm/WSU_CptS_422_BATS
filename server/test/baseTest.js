@@ -139,7 +139,6 @@ describe("Base Tests: ", () => {
     });
 
     describe("get_authorization_token", () => {
-
         it("Valid Bearer Token", (done) => {
             let bearer_token = "Bearer 7edfa62b-0024-4f68-a2d4-d3319dfd6d2f";
             let token = baseRouter.get_authorization_token(bearer_token);

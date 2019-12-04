@@ -1,7 +1,7 @@
 //EXAMPLE file for creating a db model for SQL interfacing
 const mysql = require('mysql');
 const database_name = 'bats';
-let conn;
+let dbConn;
 let options = {};
 let db = {};
 
@@ -22,7 +22,7 @@ const TAGS_TABLE = `
 	CREATE TABLE IF NOT EXISTS tags (
 		id BIGINT NOT NULL AUTO_INCREMENT,
 		token_id BIGINT NOT NULL,
-		name VARCHAR(1024) NOT NULL,
+		name VARCHAR(512) NOT NULL,
 		value TEXT NULL,
 		created TIMESTAMP NOT NULL,
 		PRIMARY KEY (id),
@@ -46,53 +46,46 @@ const INTERACTIONS_TABLE = `
 const TABLES = [TOKENS_TABLE, TAGS_TABLE, INTERACTIONS_TABLE];
 
 /* Configure connection parameters. */
-options.host = process.env.DB_HOST || '422-bats-mysql.mysql.database.azure.com';
-options.user = process.env.DB_USERNAME || 'bats@422-bats-mysql';
-options.password = process.env.DB_PASSWORD || '422pass123!';
+options.host = process.env.DB_HOST || 'localhost';
+options.user = process.env.DB_USERNAME || 'root';
+options.password = process.env.DB_PASSWORD || 'test_pwd'; // See run-tests.sh
 options.port = process.env.DB_PORT || '3306';
 options.database = process.env.DB_NAME || database_name;
 
-/* Create a new MySQL connection instance. */
-conn = mysql.createConnection(options);
+const connect = async () => {
+	/* Create a new MySQL connection instance. */
+	const conn = mysql.createConnection(options);
 
-/* Connect to the database. */
-console.log('Connecting to remote database');
-conn.connect(async err => {
-	if (err) {
-		console.error(`error connecting: ${err.stack}`);
-		return;
-	}
-	console.log(`connected to database as id ${conn.threadId}`);
-
-	/*
-	await conn.query(`DROP DATABASE ${database_name};`, (err) => {
-		if (err) console.log(err);
+	/* Connect to the database. */
+	console.log('Connecting to remote database');
+	const promise = new Promise((resolve, reject) => {
+		conn.connect(async err => {
+			if (err) {
+				console.error(`error connecting: ${err.stack}`);
+				reject();
+				return;
+			}
+			console.log(`Connected to database as id ${conn.threadId}`);
+			resolve();
+		});
 	});
-	*/
+	await promise;
 
-	/* Create the database if it does not exist. Note: options.database must be ommited to
-	   to run this step for the database to be created. */
-	await conn.query(`CREATE DATABASE IF NOT EXISTS ${database_name};`, (err) => {
-		if (err) console.log(err);
-	});
-
-	/* Create the tables if they do not exist. */
 	for (var i in TABLES) {
 		await conn.query(TABLES[i], (err) => {
 			if (err) console.log(err);
 		});
 	}
-
-	/* Generate mock data.
-	const { generateMockData } = require('./mock');
-	generateMockData();
-	*/
-});
+	return conn;
+};
 
 /* Helper function to execute queries. */
 db.executeQuery = (query, queryParams) => {
-	return new Promise((resolve) => {
-		conn.query(query, queryParams, (err, results) => {
+	return new Promise(async (resolve) => {
+		if (!dbConn) {
+			dbConn = await connect();
+		}
+		dbConn.query(query, queryParams, (err, results) => {
 			if (err) console.log(err);
 			resolve(results);
 		});

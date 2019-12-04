@@ -10,4 +10,4 @@ The bash script will check and install necessary dependencies. If you are not on
   - If on mac add flag "--mysql" for full mysql setup
 
 ## Testing:
-  - In terminal use "npm run-script test" to pull up a demo with a test token 
+  - In terminal use `npm run-script test` to run all unit and integration tests.
