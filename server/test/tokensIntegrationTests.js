@@ -47,9 +47,7 @@ describe("Token Integration Tests: ", () => {
         });
 
         after(() =>{
-            db.executeQuery(`DELETE FROM tokens`).then((results) => {
-                done();
-            });
+            db.executeQuery(`DELETE FROM tokens`).then((results) => {});
         });
     });
 
@@ -60,11 +58,9 @@ describe("Token Integration Tests: ", () => {
         before(() => {
             db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', 'Organization 1', CURRENT_TIMESTAMP());`).then((results) => {
                 account_count++;
-                done();
             });
             db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('a61c2fa0-e977-4982-9871-071514b26g1s', 'Organization 2', CURRENT_TIMESTAMP());`).then((results) => {
                 account_count++;
-                done();
             });
         });
         //DB List Count (create a token and delete a token, ensure the db is consistent)
@@ -106,9 +102,7 @@ describe("Token Integration Tests: ", () => {
         });
 
         after(() =>{
-            db.executeQuery(`DELETE FROM tokens`).then((results) => {
-                done();
-            });
+            db.executeQuery(`DELETE FROM tokens`).then((results) => {});
         });
     });
 });
