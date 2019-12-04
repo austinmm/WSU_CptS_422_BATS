@@ -17,9 +17,11 @@ echo "Waiting for db to initialize..."
 sleep 10
 
 # Run tests
-nyc --reporter=text mocha
+mocha
 
 # Stop and remove MySQL container
 echo "Cleaning up..."
 docker stop $(docker ps -aq --filter=label=bats-mysql)
 docker rm $(docker ps -aq --filter=label=bats-mysql)
+
+$SHELL
