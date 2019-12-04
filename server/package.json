@@ -6,7 +6,7 @@
   "scripts": {
     "test": "bash ./run-tests.sh",
     "unit-test": "mocha",
-    "unit-test-with-coverage": "nyc --reporter=text mocha",
+    "unit-test-with-coverage": "npx nyc --reporter=text mocha",
     "frontend-test": "open ../frontend/index.html && echo \"Test auth token: 7edfa62b-0024-4f68-a2d4-d3319dfd6d2f\" && node app.js"
   },
   "keywords": [],

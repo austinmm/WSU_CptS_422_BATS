@@ -1,7 +1,6 @@
 const chai = require('chai');
 const assert = chai.assert;
 const chaiHttp = require('chai-http');
-const sinon = require('sinon');
 const app = require('../app');
 const db = require('../lib/db');
 
@@ -35,7 +34,6 @@ describe("Tokens Integration Tests: ", () => {
                 res.should.have.status(201);
 
                 const data = await db.executeQuery("SELECT organization FROM tokens WHERE organization = 'New Org';");
-                console.log(data);
                 assert.equal(data.length, 1);
                 done();
             });
