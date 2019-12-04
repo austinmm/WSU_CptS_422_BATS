@@ -5,7 +5,7 @@ blue=`tput setaf 4`
 color=`tput setaf 6`
 reset=`tput sgr0`
 
-#helper functions 
+#helper functions
 #Downloading node packages for template
 download_packages () {
   echo "${yellow}Attempting to install necessary packages ...${reset}"
@@ -34,7 +34,7 @@ mysql_instr () {
   echo "${yellow}      password           VARCHAR(150) NOT NULL,  ${reset}"
   echo "${yellow}      PRIMARY KEY     (id)   ${reset}"
   echo "${yellow} );   #(Only do this on your first time! also you can copy and paste)${reset}"
-  echo 
+  echo
   echo "${yellow}5. SHOW TABLES${reset}"
   echo "${yellow}6. exit ${reset}"
   echo "${red}To exit mysql type   exit   ${reset}"
