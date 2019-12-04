@@ -19,8 +19,10 @@ router.use('/', async (req, res, next) => {
 router.post('/:name', async (req, res) => {
   const tag_name = req.params.name;
   const interaction = req.body.interaction;
-  const value = req.body.value;
-  if (!value) value = '';
+  var value = req.body.value;
+  if (!value){
+    value = '';
+  }
   const token_id = res.locals.token_id;
 
   var results = await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`);

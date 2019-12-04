@@ -14,8 +14,8 @@ chai.should();
 
 describe("Tag Router Tests: ", () => {
     describe("(post) /:name", () => {
-        let testCount = 0;
-        let executeQueryCount = 0;
+        var testCount = 0;
+        var dbQueryCount = 0;
 
         before(() => {
             sinon.stub(mysql, "createConnection").callsFake(() => {
@@ -26,48 +26,88 @@ describe("Tag Router Tests: ", () => {
                 return new Promise((resolve) => {
                     switch (testCount) {
                         case 0:
-                            switch (executeQueryCount) {
-                                case 0:
-                                    resolve({insertId: 1});
+                            switch(dbQueryCount){
+                                case 0: resolve({insertId: 1});
                                     break;
-                                default:
-                                    resolve({});
-                                    break;
+                                default: resolve({});
                             }
+                            dbQueryCount++;
                             break;
                         case 1:
-                            switch (executeQueryCount) {
-                                case 0:
-                                    resolve({insertId: 0});
+                            switch(dbQueryCount){
+                                case 0: resolve({insertId: 0});
                                     break;
-                                case 1:
-                                    resolve([{id: 1}]);
+                                case 1: resolve([{id: 1}]);
                                     break;
-                                default:
-                                    resolve({});
-                                    break;
+                                default: resolve({});
                             }
+                            dbQueryCount++;
                             break;
+                        case 2:
+                            switch(dbQueryCount){
+                                case 0: resolve({insertId: 0});
+                                    break;
+                                case 1: resolve([{id: 1}]);
+                                    break;
+                                default: resolve({});
+                            }
+                            dbQueryCount++;
+                            break;
+                        default:
+                            resolve({});
                     }
-                    executeQueryCount++;
                 });
             });
 
-            sinon.stub(baseRouter, "get_authorization_token").callsFake(() =>
-                "Bearer auth_token");
+            sinon.stub(baseRouter, "get_authorization_token").callsFake(() => {
+                switch (testCount) {
+                    case 0:
+                        return "auth_token";
+                    case 1:
+                        return "auth_token";
+                    case 2:
+                        return "auth_token";
+                    case 3:
+                        return "";
+                    case 4:
+                        return "auth_token";
+                    default:
+                        return "auth_token";
+                }
+            });
 
             sinon.stub(baseRouter, "check_token_existence").callsFake(() => {
                 return new Promise((resolve) => {
-                    resolve(1);
+                    switch (testCount) {
+                        case 0:
+                            resolve(1);
+                            break;
+                        case 1:
+                            resolve(1);
+                            break;
+                        case 2:
+                            resolve(1);
+                            break;
+                        case 3:
+                            resolve(-1);
+                            break;
+                        case 4:
+                            resolve(-1);
+                            break;
+                        default:
+                            resolve(1);
+                    }
                 });
             });
         });
 
         beforeEach(() => {
-            executeQueryCount = 0;
+            console.log("COUNT");
+            console.log(dbQueryCount);
+            dbQueryCount = 0;
         });
 
-        it("update existing tag and create interaction", (done) => {
+        it("insert tag and create interaction", (done) => {
             chai.request(app)
                 .post('/api/tags/custom.tag')
                 .send({interaction: "ButtonClick", value: "test"})
@@ -80,15 +120,47 @@ describe("Tag Router Tests: ", () => {
                 });
         });
 
-        it("insert tag and create interaction", (done) => {
+        it("Update existing tag w/ new interaction & NO value", (done) => {
             chai.request(app)
                 .post('/api/tags/custom.tag')
-                .send({interaction: "ButtonClick", value: "test"})
+                .send({interaction: "ButtonClick"})
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    assert.equal(res.body.tag.name, "custom.tag");
+                    assert.equal(res.body.interaction, "ButtonClick");
+                    done();
+                });
+        });
+
+        it("Update existing tag w/ new interaction & value", (done) => {
+            chai.request(app)
+                .post('/api/tags/custom.tag')
+                .send({interaction: "ImageSelected",  value: "test"})
                 .end((err, res) => {
                     res.should.have.status(201);
                     assert.equal(res.body.tag.name, "custom.tag");
                     assert.equal(res.body.tag.value, "test");
-                    assert.equal(res.body.interaction, "ButtonClick");
+                    assert.equal(res.body.interaction, "ImageSelected");
+                    done();
+                });
+        });
+
+        it("Attempt Tag Post w/out Providing Authentication", (done) => {
+            chai.request(app)
+                .post('/api/tags/custom.tag')
+                .send({interaction: "ButtonClick", value: "test"})
+                .end((err, res) => {
+                    res.should.have.status(401);
+                    done();
+                });
+        });
+
+        it("Attempt Tag Post w/ Invalid Authentication", (done) => {
+            chai.request(app)
+                .post('/api/tags/custom.tag')
+                .send({interaction: "ButtonClick", value: "test"})
+                .end((err, res) => {
+                    res.should.have.status(403);
                     done();
                 });
         });
@@ -107,7 +179,7 @@ describe("Tag Router Tests: ", () => {
 
     //testing a specific tag
     describe("(get) /:name", () => {
-        let executeQueryCount = 0;
+        let testCount = 0;
 
         before(() => {
             sinon.stub(mysql, "createConnection").callsFake(() => {
@@ -116,7 +188,7 @@ describe("Tag Router Tests: ", () => {
 
             sinon.stub(db, "executeQuery").callsFake(() => {
                 return new Promise((resolve) => {
-                    switch (executeQueryCount) {
+                    switch (testCount) {
                         case 0:
                             resolve([{token_id: 12, name: "Test", created: "SomeDate"}]);
                         case 1:
@@ -124,12 +196,41 @@ describe("Tag Router Tests: ", () => {
                     }
                 });
             });
-            sinon.stub(baseRouter, "get_authorization_token").callsFake(() =>
-                "Bearer auth_token");
+
+            sinon.stub(baseRouter, "get_authorization_token").callsFake(() => {
+                switch (testCount) {
+                    case 0:
+                        return "auth_token";
+                    case 1:
+                        return "auth_token";
+                    case 2:
+                        return "";
+                    case 3:
+                        return "auth_token";
+                    default:
+                        return "auth_token";
+                }
+            });
 
             sinon.stub(baseRouter, "check_token_existence").callsFake(() => {
                 return new Promise((resolve) => {
-                    resolve(1);
+                    switch (testCount) {
+                        case 0:
+                            resolve(1);
+                            break;
+                        case 1:
+                            resolve(1);
+                            break;
+                        case 2:
+                            resolve(-1);
+                            break;
+                        case 3:
+                            resolve(-1);
+                            break;
+                        default:
+                            resolve(1);
+                            break;
+                    }
                 });
             });
         });
@@ -148,15 +249,33 @@ describe("Tag Router Tests: ", () => {
 
         it("request info on tag with status 404", done => {
             chai.request(app)
-                .get('/api/tags')
+                .get('/api/tags/Testing1234')
                 .end((err, res) => {
                     res.should.have.status(404);
                     done();
                 });
         });
 
+        it("Attempt to GET Tag w/out Providing Authentication", (done) => {
+            chai.request(app)
+                .get('/api/tags/Testing1234')
+                .end((err, res) => {
+                    res.should.have.status(401);
+                    done();
+                });
+        });
+
+        it("Attempt to GET Tag w/ Invalid Authentication", (done) => {
+            chai.request(app)
+                .get('/api/tags/Testing1234')
+                .end((err, res) => {
+                    res.should.have.status(403);
+                    done();
+                });
+        });
+
         afterEach(() => {
-            executeQueryCount++;
+            testCount++;
         });
 
         after(() => {
@@ -169,7 +288,7 @@ describe("Tag Router Tests: ", () => {
 
     //testing all tags
     describe("(get) /", () => {
-        let executeQueryCount = 0;
+        let testCount = 0;
 
         before(() => {
             sinon.stub(mysql, "createConnection").callsFake(() => {
@@ -178,7 +297,7 @@ describe("Tag Router Tests: ", () => {
 
             sinon.stub(db, "executeQuery").callsFake(() => {
                 return new Promise((resolve) => {
-                    switch (executeQueryCount) {
+                    switch (testCount) {
                         case 0:
                             resolve([{token_id: 12, name: "Test", created: "SomeDate"}]);
                         case 1:
@@ -186,12 +305,41 @@ describe("Tag Router Tests: ", () => {
                     }
                 });
             });
-            sinon.stub(baseRouter, "get_authorization_token").callsFake(() =>
-                "Bearer auth_token");
+
+            sinon.stub(baseRouter, "get_authorization_token").callsFake(() => {
+                switch (testCount) {
+                    case 0:
+                        return "auth_token";
+                    case 1:
+                        return "auth_token";
+                    case 2:
+                        return "";
+                    case 3:
+                        return "auth_token";
+                    default:
+                        return "auth_token";
+                }
+            });
 
             sinon.stub(baseRouter, "check_token_existence").callsFake(() => {
                 return new Promise((resolve) => {
-                    resolve(1);
+                    switch (testCount) {
+                        case 0:
+                            resolve(1);
+                            break;
+                        case 1:
+                            resolve(1);
+                            break;
+                        case 2:
+                            resolve(-1);
+                            break;
+                        case 3:
+                            resolve(-1);
+                            break;
+                        default:
+                            resolve(1);
+                            break;
+                    }
                 });
             });
         });
@@ -217,8 +365,26 @@ describe("Tag Router Tests: ", () => {
                 });
         });
 
+        it("Attempt to GET Tags w/out Providing Authentication", (done) => {
+            chai.request(app)
+                .get('/api/tags')
+                .end((err, res) => {
+                    res.should.have.status(401);
+                    done();
+                });
+        });
+
+        it("Attempt to GET Tags w/ Invalid Authentication", (done) => {
+            chai.request(app)
+                .get('/api/tags')
+                .end((err, res) => {
+                    res.should.have.status(403);
+                    done();
+                });
+        });
+
         afterEach(() => {
-            executeQueryCount++;
+            testCount++;
         });
 
         after(() => {
