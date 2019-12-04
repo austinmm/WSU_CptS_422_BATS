@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "run-tests.sh",
-    "unit-tests": "mocha",
+    "unit-test": "mocha",
+    "unit-test-with-coverage": "nyc --reporter=text mocha",
     "frontend-test": "open ../frontend/index.html && echo \"Test auth token: 7edfa62b-0024-4f68-a2d4-d3319dfd6d2f\" && node app.js"
   },
   "keywords": [],
@@ -20,6 +21,7 @@
     "mocha": "^6.2.2",
     "mysql": "^2.17.1",
     "node-mocks-http": "^1.8.0",
+    "nyc": "^14.1.1",
     "path": "^0.12.7",
     "sinon": "^7.5.0",
     "uuidv4": "^5.0.1"
