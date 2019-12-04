@@ -17,7 +17,7 @@ echo "Waiting for db to initialize..."
 sleep 10
 
 # Run tests
-nyc --reporter=text mocha
+npx nyc --reporter=text mocha
 
 # Stop and remove MySQL container
 echo "Cleaning up..."
