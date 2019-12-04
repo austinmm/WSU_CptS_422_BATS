@@ -31,4 +31,50 @@ describe("Tag Integration Tests: ", () => {
 
         });
     });
+
+    describe("Get Tag - POST & GET", () => {
+        var token_id = "a61c2fa0-e977-4982-9871-071514b2bc92";
+        var tag_name = "this.that.then.this";
+        var value = "somevalue";
+        var tags_count = 0;
+        var results = await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`);
+  
+        before(() => {
+            db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`).then((results) => {
+                tags_count++;
+            });
+        });
+        //DB List Count (create a token and delete a token, ensure the db is consistent)
+        beforeEach(() => {
+
+        });
+
+        it("POST tags/", (done) => {
+            chai.request(app)
+                .post('/api/tags/')
+                .send({name: tag_name})
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    tags = res.body.tags.name;
+                    done();
+                });
+        });
+
+        it("GET tags/", (done) => {
+            chai.request(app)
+                .get(`/api/tags/`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    assert.equal(res.body.length, tags_count - 1);
+                    done();
+                });
+        });
+        afterEach(() => {
+
+        });
+
+        after(() =>{
+            db.executeQuery(`DELETE FROM tags`).then((results) => {});
+        });
+    });
 });
