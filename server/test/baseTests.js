@@ -1,3 +1,5 @@
+/* Contains all tests related to base.js, which includes testing helper functions and middleware. */
+
 const chai = require('chai');
 const assert = chai.assert;
 const sinon = require('sinon');

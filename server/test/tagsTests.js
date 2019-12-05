@@ -1,3 +1,7 @@
+/* Contains all unit tests for our tag Express routes. All external method
+calls made inside the logic of each route are stubbed to provide necessary
+isolation to ensure consistent and expected behavior in our unit tests. */
+
 const chai = require('chai');
 const assert = chai.assert;
 const sinon = require('sinon');
