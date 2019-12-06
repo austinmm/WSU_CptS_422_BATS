@@ -106,8 +106,6 @@ describe("Tag Router Tests: ", () => {
         });
 
         beforeEach(() => {
-            console.log("COUNT");
-            console.log(dbQueryCount);
             dbQueryCount = 0;
         });
 
