@@ -13,7 +13,7 @@ chai.should();
 describe("Tag Integration Tests: ", () => {
     describe("Get Tag - POST & GET", () => {
         var token_id = "a61c2fa0-e977-4982-9871-071514b2bc92";
-        var tag_name = "this.that.then.this";
+        var tag_name = "custom.tag";
         var value = "somevalue";
         var tags_count = 0;
         before(async() => {
@@ -28,7 +28,7 @@ describe("Tag Integration Tests: ", () => {
 
         it("POST tags/", (done) => {
             chai.request(app)
-                .post('/api/tags/')
+                .post(`/api/tags/${tag_name}`)
                 .send({name: tag_name})
                 .end((err, res) => {
                     res.should.have.status(201);
@@ -38,7 +38,7 @@ describe("Tag Integration Tests: ", () => {
 
         it("GET tags/", (done) => {
             chai.request(app)
-                .get(`/api/tags/`)
+                .get(`/api/tags`)
                 .end((err, res) => {
                     res.should.have.status(200);
                     assert.equal(res.body.length, tags_count - 1);
