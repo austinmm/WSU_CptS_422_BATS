@@ -12,11 +12,13 @@ chai.should();
 
 describe("Tag Integration Tests: ", () => {
     describe("Get Tag - POST & GET", () => {
-        var token_id = "a61c2fa0-e977-4982-9871-071514b2bc92";
+        const organization = "Test Org";
+        var token_id = "sometokenid";
         var tag_name = "custom.tag";
         var value = "somevalue";
         var tags_count = 0;
         before(async() => {
+            await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token_id}', '${organization}', CURRENT_TIMESTAMP());`);
             await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`).then((results) => {
                 tags_count++;
             });
