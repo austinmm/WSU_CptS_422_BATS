@@ -1,3 +1,5 @@
+/* Contains all integration tests related to token endpoints. */
+
 const chai = require('chai');
 const assert = chai.assert;
 const chaiHttp = require('chai-http');
