@@ -11,36 +11,13 @@ chai.use(chaiHttp);
 chai.should();
 
 describe("Tag Integration Tests: ", () => {
-    describe("<integration test 1>", () => {
-        before(() => {
-
-        });
-
-        beforeEach(() => {
-
-        });
-
-        it("<test case 1>", (done) => {
-            db.executeQuery("SELECT * FROM tags;").then((results) => {
-                console.log(results);
-                done();
-            });
-        });
-
-        afterEach(() => {
-
-        });
-    });
-
     describe("Get Tag - POST & GET", () => {
         var token_id = "a61c2fa0-e977-4982-9871-071514b2bc92";
         var tag_name = "this.that.then.this";
         var value = "somevalue";
         var tags_count = 0;
-        var results = await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`);
-  
-        before(() => {
-            db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`).then((results) => {
+        before(async() => {
+            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`).then((results) => {
                 tags_count++;
             });
         });
@@ -55,7 +32,6 @@ describe("Tag Integration Tests: ", () => {
                 .send({name: tag_name})
                 .end((err, res) => {
                     res.should.have.status(201);
-                    tags = res.body.tags.name;
                     done();
                 });
         });
