@@ -67,7 +67,7 @@ describe("Tag Integration Tests: ", () => {
             .set('authorization', `Bearer ${token}`)
             .send({name: tag_name})
             .end((err, res) => {
-                res.should.have.status(201);
+                res.should.have.status(404);
                 tags = res.body.tags.name;
                 done();
             });
