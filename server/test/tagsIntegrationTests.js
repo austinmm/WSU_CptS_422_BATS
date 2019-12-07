@@ -20,9 +20,8 @@ describe("Tag Integration Tests: ", () => {
         var tags_count = 0;
         before(async() => {
             await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
-            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}';`).then((results) => {
-                tags_count++;
-            });
+            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}'`);
+            tags_count++;
         });
         //DB List Count (create a token and delete a token, ensure the db is consistent)
         beforeEach(() => {

@@ -14,7 +14,7 @@ docker run -d \
   mysql:5.6
 
 echo "Waiting for db to initialize..."
-sleep 10
+sleep 15
 
 # Run tests
 npx nyc --reporter=text mocha
@@ -23,3 +23,4 @@ npx nyc --reporter=text mocha
 echo "Cleaning up..."
 docker stop $(docker ps -aq --filter=label=bats-mysql)
 docker rm $(docker ps -aq --filter=label=bats-mysql)
+
