@@ -76,7 +76,7 @@ describe("Tag Integration Tests: ", () => {
         
         it("GET tag/", (done) => {
             chai.request(app)
-            .get(`/api/tags/${tag_name}`)
+            .get(`/api/tags`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
