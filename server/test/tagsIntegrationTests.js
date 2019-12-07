@@ -124,13 +124,13 @@ describe("Tag Integration Tests: ", () => {
         
         it("GET existing tag and verify information", (done) => {
             chai.request(app)
-            .get(`/api/tags/custom.tag`)
+            .get(`/api/tags/`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                //assert.equal(res.body.name, "custom.tag");
-                assert.equal(res.body.interaction, "ButtonClick");
-                assert.equal(res.body.value, "test");
+                assert.equal(res.body[0].name, "custom.tag");
+                assert.equal(res.body[0].interaction, "ButtonClick");
+                assert.equal(res.body[0].value, "test");
                 done();
             });
         });
@@ -155,9 +155,9 @@ describe("Tag Integration Tests: ", () => {
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                assert.equal(res.body.tag.name, "custom.tag");
-                assert.equal(res.body.interaction, "ImageSelected");
-                assert.equal(res.body.value, "testing");
+                assert.equal(res.body[0].name, "custom.tag");
+                assert.equal(res.body[0].interaction, "ImageSelected");
+                assert.equal(res.body[0].value, "testing");
                 done();
             });
         });
