@@ -76,11 +76,11 @@ describe("Tag Integration Tests: ", () => {
         
         it("GET tag/", (done) => {
             chai.request(app)
-            .get(`/api/tags/`)
+            .post(`/api/tags/${tag_name}`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                assert.equal(res.body.tagName, "test");
+                assert.equal(res.body.name, "test");
                 done();
             });
         });
@@ -93,15 +93,17 @@ describe("Tag Integration Tests: ", () => {
     
     describe("Update/Insert tag - POST and GET", () => {
 
-        var tag_name = "test";
-        const organization = "Test Org";
-        const token = "a61c2fa0-e977-4982-9871-071514b2bc92";
 
+        var tag_name = "custom.tag";
+        var organization = "Test Org";
+        var token = "a61c2fa0-e977-4982-9871-071514b2bc92";
+        var value = "test";
         
         before(async () => {
-            await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
+            const resp = await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
+            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${resp.insertId}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}'`);
         });
-
+        
         beforeEach(() => {
 
         });
@@ -109,6 +111,7 @@ describe("Tag Integration Tests: ", () => {
         it("No tags currently exist", done => {
             chai.request(app)
             .get('/api/tags')
+            .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(404);
                 done();
@@ -118,6 +121,7 @@ describe("Tag Integration Tests: ", () => {
         it("Insert tag with interaction and value", (done) => {
             chai.request(app)
             .post('/api/tags/custom.tag')
+            .set('authorization', `Bearer ${token}`)
             .send({interaction: "ButtonClick", value: "test"})
             .end((err, res) => {
                 res.should.have.status(201);
@@ -132,6 +136,7 @@ describe("Tag Integration Tests: ", () => {
         it("GET existing tag and verify information", (done) => {
             chai.request(app)
             .get(`/api/tags/custom.tag`)
+            .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
                 assert.equal(res.body[0].name, "custom.tag");
@@ -144,6 +149,7 @@ describe("Tag Integration Tests: ", () => {
         it("Update existing tag w/ new interaction & value", (done) => {
             chai.request(app)
             .post('/api/tags/custom.tag')
+            .set('authorization', `Bearer ${token}`)
             .send({interaction: "ImageSelected",  value: "testing"})
             .end((err, res) => {
                 res.should.have.status(201);
@@ -157,6 +163,7 @@ describe("Tag Integration Tests: ", () => {
         it("GET updated tag and verify information", (done) => {
             chai.request(app)
             .get(`/api/tags/custom.tag`)
+            .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
                 assert.equal(res.body[0].name, "custom.tag");
@@ -166,9 +173,9 @@ describe("Tag Integration Tests: ", () => {
             });
         });
 
-        after(() => {
-            db.executeQuery(`DELETE FROM tags`).then((results) => {});
-            db.executeQuery(`DELETE FROM tokens`).then((results) => {});
+        after(async () =>{
+            await db.executeQuery(`DELETE FROM tags`);
+            await db.executeQuery(`DELETE FROM tokens`);
         });
     });
 });
