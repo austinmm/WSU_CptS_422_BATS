@@ -76,11 +76,11 @@ describe("Tag Integration Tests: ", () => {
         
         it("GET tag/", (done) => {
             chai.request(app)
-            .get(`/api/tags/${tag_name}`)
+            .get(`/api/tags`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                assert.equal(res.body.tag.name, "test");
+                assert.equal(res.body[0].name, "test");
                 done();
             });
         });
@@ -101,7 +101,6 @@ describe("Tag Integration Tests: ", () => {
         
         before(async () => {
             const resp = await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
-            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${resp.insertId}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}'`);
         });
         
         beforeEach(() => {
