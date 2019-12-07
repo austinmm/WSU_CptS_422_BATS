@@ -107,6 +107,17 @@ describe("Tag Integration Tests: ", () => {
 
         });
         
+        it("GET non-existing tag", (done) => {
+            chai.request(app)
+            .get(`/api/tags/`)
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(404);
+                done();
+            });
+        });
+        
+        
         it("Insert tag with interaction and value", (done) => {
             chai.request(app)
             .post('/api/tags/custom.tag')
@@ -129,7 +140,6 @@ describe("Tag Integration Tests: ", () => {
             .end((err, res) => {
                 res.should.have.status(200);
                 assert.equal(res.body[0].name, "custom.tag");
-                assert.equal(res.body[0].interaction, "ButtonClick");
                 assert.equal(res.body[0].value, "test");
                 done();
             });
@@ -156,7 +166,6 @@ describe("Tag Integration Tests: ", () => {
             .end((err, res) => {
                 res.should.have.status(200);
                 assert.equal(res.body[0].name, "custom.tag");
-                assert.equal(res.body[0].interaction, "ImageSelected");
                 assert.equal(res.body[0].value, "testing");
                 done();
             });
