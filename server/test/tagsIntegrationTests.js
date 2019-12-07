@@ -45,4 +45,138 @@ describe("Tag Integration Tests: ", () => {
             await db.executeQuery(`DELETE FROM tokens`);
         });
     });
+    
+    describe("Create tag - POST and GET", () => {
+
+        var tag_name = "test";
+        var organization = "Test Org";
+        var token = "a61c2fa0-e977-4982-9871-071514b2bc92";
+        var value = "somevalue";
+        
+        before(async () => {
+            const resp = await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
+      
+        });
+
+        beforeEach(() => {
+
+        });
+
+        it("POST tag/", (done) => {
+            chai.request(app)
+            .post(`/api/tags/${tag_name}`)
+            .set('authorization', `Bearer ${token}`)
+            .send({name: tag_name})
+            .end((err, res) => {
+                res.should.have.status(201);
+                done();
+            });
+
+        });
+        
+        it("GET tag/", (done) => {
+            chai.request(app)
+            .get(`/api/tags`)
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                assert.equal(res.body[0].name, "test");
+                done();
+            });
+        });
+
+        after(async () =>{
+            await db.executeQuery(`DELETE FROM tags`);
+            await db.executeQuery(`DELETE FROM tokens`);
+        });
+    });
+    
+    describe("Update/Insert tag - POST and GET", () => {
+
+
+        var tag_name = "custom.tag";
+        var organization = "Test Org";
+        var token = "a61c2fa0-e977-4982-9871-071514b2bc92";
+        var value = "test";
+        
+        before(async () => {
+            const resp = await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
+        });
+        
+        beforeEach(() => {
+
+        });
+        
+        it("GET non-existing tag", (done) => {
+            chai.request(app)
+            .get(`/api/tags/`)
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(404);
+                done();
+            });
+        });
+        
+        
+        it("Insert tag with interaction and value", (done) => {
+            chai.request(app)
+            .post('/api/tags/custom.tag')
+            .set('authorization', `Bearer ${token}`)
+            .send({interaction: "ButtonClick", value: "test"})
+            .end((err, res) => {
+                res.should.have.status(201);
+                assert.equal(res.body.tag.name, "custom.tag");
+                assert.equal(res.body.tag.value, "test");
+                assert.equal(res.body.interaction, "ButtonClick");
+                done();
+            });
+
+        });
+        
+        it("GET existing tag and verify information", (done) => {
+            chai.request(app)
+            .get(`/api/tags/`)
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                assert.equal(res.body[0].name, "custom.tag");
+                assert.equal(res.body[0].value, "test");
+                done();
+            });
+        });
+        
+        it("Update existing tag w/ new interaction & value", (done) => {
+            chai.request(app)
+            .post('/api/tags/custom.tag')
+            .set('authorization', `Bearer ${token}`)
+            .send({interaction: "ImageSelected",  value: "testing"})
+            .end((err, res) => {
+                res.should.have.status(201);
+                assert.equal(res.body.tag.name, "custom.tag");
+                assert.equal(res.body.tag.value, "testing");
+                assert.equal(res.body.interaction, "ImageSelected");
+                done();
+            });
+        });
+
+        it("GET updated tag and verify information", (done) => {
+            chai.request(app)
+            .get(`/api/tags/custom.tag`)
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                assert.equal(res.body[0].name, "custom.tag");
+                assert.equal(res.body[0].value, "testing");
+                done();
+            });
+        });
+
+        after(async () =>{
+            await db.executeQuery(`DELETE FROM tags`);
+            await db.executeQuery(`DELETE FROM tokens`);
+        });
+    });
 });
+
+
+
