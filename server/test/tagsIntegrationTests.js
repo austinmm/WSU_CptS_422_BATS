@@ -80,7 +80,7 @@ describe("Tag Integration Tests: ", () => {
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(201);
-                assert.equal(res.body.name, "test");
+                assert.equal(res.body.tag.name, "test");
                 done();
             });
         });
@@ -125,8 +125,8 @@ describe("Tag Integration Tests: ", () => {
             .send({interaction: "ButtonClick", value: "test"})
             .end((err, res) => {
                 res.should.have.status(201);
-                assert.equal(res.body.name, "custom.tag");
-                assert.equal(res.body.value, "test");
+                assert.equal(res.body.tag.name, "custom.tag");
+                assert.equal(res.body.tag.value, "test");
                 assert.equal(res.body.interaction, "ButtonClick");
                 done();
             });
@@ -153,8 +153,8 @@ describe("Tag Integration Tests: ", () => {
             .send({interaction: "ImageSelected",  value: "testing"})
             .end((err, res) => {
                 res.should.have.status(201);
-                assert.equal(res.body.name, "custom.tag");
-                assert.equal(res.body.value, "testing");
+                assert.equal(res.body.tag.name, "custom.tag");
+                assert.equal(res.body.tag.value, "testing");
                 assert.equal(res.body.interaction, "ImageSelected");
                 done();
             });
