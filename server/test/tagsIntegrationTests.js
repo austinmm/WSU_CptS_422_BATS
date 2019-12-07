@@ -55,7 +55,7 @@ describe("Tag Integration Tests: ", () => {
         
         before(async () => {
             const resp = await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
-            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${resp.insertId}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}'`);
+      
         });
 
         beforeEach(() => {
@@ -76,7 +76,7 @@ describe("Tag Integration Tests: ", () => {
         
         it("GET tag/", (done) => {
             chai.request(app)
-            .get(`/api/tags`)
+            .get(`/api/tags/${tag_name}`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
@@ -106,16 +106,6 @@ describe("Tag Integration Tests: ", () => {
         
         beforeEach(() => {
 
-        });
-     
-        it("No tags currently exist", done => {
-            chai.request(app)
-            .get(`/api/tags/${tag_name}`)
-            .set('authorization', `Bearer ${token}`)
-            .end((err, res) => {
-                res.should.have.status(404);
-                done();
-            });
         });
         
         it("Insert tag with interaction and value", (done) => {
