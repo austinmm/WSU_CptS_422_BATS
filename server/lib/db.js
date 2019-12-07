@@ -49,7 +49,7 @@ const TABLES = [TOKENS_TABLE, TAGS_TABLE, INTERACTIONS_TABLE];
 options.host = process.env.DB_HOST || 'localhost';
 options.user = process.env.DB_USERNAME || 'root';
 options.password = process.env.DB_PASSWORD || 'test_pwd'; // See run-tests.sh
-options.port = process.env.DB_PORT || '3306';
+options.port = process.env.DB_PORT || '3307';
 options.database = process.env.DB_NAME || database_name;
 
 const connect = async () => {
