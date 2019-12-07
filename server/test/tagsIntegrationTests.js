@@ -64,7 +64,7 @@ describe("Tag Integration Tests: ", () => {
 
         it("POST tag/", (done) => {
             chai.request(app)
-            .post('/api/tags/')
+            .post(`/api/tags/${tag_name}`)
             .set('authorization', `Bearer ${token}`)
             .send({name: tag_name})
             .end((err, res) => {
