@@ -76,7 +76,7 @@ describe("Tag Integration Tests: ", () => {
         
         it("GET tag/", (done) => {
             chai.request(app)
-            .post(`/api/tags/${tag_name}`)
+            .get(`/api/tags/${tag_name}`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(201);
@@ -110,7 +110,7 @@ describe("Tag Integration Tests: ", () => {
      
         it("No tags currently exist", done => {
             chai.request(app)
-            .get('/api/tags')
+            .get(`/api/tags/${tag_name}`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(404);
@@ -135,7 +135,7 @@ describe("Tag Integration Tests: ", () => {
         
         it("GET existing tag and verify information", (done) => {
             chai.request(app)
-            .get(`/api/tags/custom.tag`)
+            .get(`/api/tags/${tag_name}`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
@@ -162,7 +162,7 @@ describe("Tag Integration Tests: ", () => {
 
         it("GET updated tag and verify information", (done) => {
             chai.request(app)
-            .get(`/api/tags/custom.tag`)
+            .get(`/api/tags/${tag_name}`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
