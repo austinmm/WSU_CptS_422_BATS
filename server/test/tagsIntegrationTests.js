@@ -64,6 +64,7 @@ describe("Tag Integration Tests: ", () => {
         it("POST tag/", (done) => {
             chai.request(app)
             .post('/api/tags/')
+            .set('authorization', `Bearer ${token}`)
             .send({name: tag_name})
             .end((err, res) => {
                 res.should.have.status(201);
@@ -76,6 +77,7 @@ describe("Tag Integration Tests: ", () => {
         it("GET tag/", (done) => {
             chai.request(app)
             .get(`/api/tags/`)
+            .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
                 assert.equal(res.body.tag.name, "test");
@@ -83,9 +85,9 @@ describe("Tag Integration Tests: ", () => {
             });
         });
 
-        after(() => {
-            db.executeQuery(`DELETE FROM tags`).then((results) => {});
-            db.executeQuery(`DELETE FROM tokens`).then((results) => {});
+        after(async () =>{
+            await db.executeQuery(`DELETE FROM tags`);
+            await db.executeQuery(`DELETE FROM tokens`);
         });
     });
     
