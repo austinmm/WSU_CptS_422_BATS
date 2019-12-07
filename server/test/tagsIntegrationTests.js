@@ -13,7 +13,7 @@ chai.should();
 describe("Tag Integration Tests: ", () => {
     describe("Get Tag - POST & GET", () => {
         const organization = "Test Org";
-        var token_id = "sometokenid";
+        var token_id = 0;
         var tag_name = "custom.tag";
         var value = "somevalue";
         var tags_count = 0;
