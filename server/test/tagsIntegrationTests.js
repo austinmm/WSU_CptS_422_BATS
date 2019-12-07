@@ -69,7 +69,7 @@ describe("Tag Integration Tests: ", () => {
 
         after(() => {
             db.executeQuery(`DELETE FROM tags`).then((results) => {});
-            //db.executeQuery(`DELETE FROM tokens`).then((results) => {});
+            db.executeQuery(`DELETE FROM tokens`).then((results) => {});
         });
     });
     
@@ -150,6 +150,7 @@ describe("Tag Integration Tests: ", () => {
 
         after(() => {
             db.executeQuery(`DELETE FROM tags`).then((results) => {});
+            db.executeQuery(`DELETE FROM tokens`).then((results) => {});
         });
     });
 });
