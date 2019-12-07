@@ -10,16 +10,19 @@ docker run -d \
   --label bats-mysql $CONTAINER_NAME \
   -e MYSQL_ROOT_PASSWORD=test_pwd \
   -e MYSQL_DATABASE=bats \
-  -p 3306:3306 \
+  -p 3307:3306 \
   mysql:5.6
 
 echo "Waiting for db to initialize..."
-sleep 10
+sleep 15
 
 # Run tests
-npx nyc --reporter=text mocha
+# npx nyc --reporter=text mocha
+export TEST_ENV="true"
+mocha
 
 # Stop and remove MySQL container
 echo "Cleaning up..."
 docker stop $(docker ps -aq --filter=label=bats-mysql)
 docker rm $(docker ps -aq --filter=label=bats-mysql)
+
