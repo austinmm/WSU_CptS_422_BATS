@@ -13,47 +13,36 @@ chai.should();
 describe("Tag Integration Tests: ", () => {
     describe("Get Tag - POST & GET", () => {
         const organization = "Test Org";
-        var token_id = 0;
         var tag_name = "custom.tag";
         var token = "a61c2fa0-e977-4982-9871-071514b2bc92";
         var value = "somevalue";
-        var tags_count = 0;
+        var tags_count = 1;
         before(async() => {
-            await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
-            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${token_id}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}'`);
-            tags_count++;
-        });
-        //DB List Count (create a token and delete a token, ensure the db is consistent)
-        beforeEach(() => {
-
+            const resp = await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
+            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${resp.insertId}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}'`);
         });
 
         it("POST tags/", (done) => {
             chai.request(app)
                 .post(`/api/tags/${tag_name}`)
+                .set('authorization', `Bearer ${token}`)
                 .send({name: tag_name})
                 .end((err, res) => {
                     res.should.have.status(201);
-                    done();
                 });
-        });
-
-        it("GET tags/", (done) => {
             chai.request(app)
                 .get(`/api/tags`)
+                .set('authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     res.should.have.status(200);
-                    assert.equal(res.body.length, tags_count - 1);
+                    assert.equal(res.body.length, tags_count);
                     done();
                 });
         });
-        afterEach(() => {
 
-        });
-
-        after(() =>{
-            db.executeQuery(`DELETE FROM tags`).then((results) => {});
-            db.executeQuery(`DELETE FROM tokens`).then((results) => {});
+        after(async () =>{
+            await db.executeQuery(`DELETE FROM tags`);
+            await db.executeQuery(`DELETE FROM tokens`);
         });
     });
 });
