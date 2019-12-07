@@ -49,12 +49,13 @@ describe("Tag Integration Tests: ", () => {
     describe("Create tag - POST and GET", () => {
 
         var tag_name = "test";
-        const organization = "Test Org";
-        const token = "a61c2fa0-e977-4982-9871-071514b2bc92";
-
+        var organization = "Test Org";
+        var token = "a61c2fa0-e977-4982-9871-071514b2bc92";
+        var value = "somevalue";
         
         before(async () => {
-            await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
+            const resp = await db.executeQuery(`INSERT INTO tokens (token, organization, issued) VALUES ('${token}', '${organization}', CURRENT_TIMESTAMP());`);
+            await db.executeQuery(`INSERT INTO tags (token_id, name, value, created) VALUES (${resp.insertId}, '${tag_name}', '${value}', CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE value='${value}'`);
         });
 
         beforeEach(() => {
@@ -67,7 +68,7 @@ describe("Tag Integration Tests: ", () => {
             .set('authorization', `Bearer ${token}`)
             .send({name: tag_name})
             .end((err, res) => {
-                res.should.have.status(404);
+                res.should.have.status(201);
                 tags = res.body.tags.name;
                 done();
             });
