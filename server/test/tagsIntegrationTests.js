@@ -79,7 +79,7 @@ describe("Tag Integration Tests: ", () => {
             .get(`/api/tags/${tag_name}`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
-                res.should.have.status(201);
+                res.should.have.status(200);
                 assert.equal(res.body.tag.name, "test");
                 done();
             });
@@ -135,11 +135,11 @@ describe("Tag Integration Tests: ", () => {
         
         it("GET existing tag and verify information", (done) => {
             chai.request(app)
-            .get(`/api/tags/${tag_name}`)
+            .get(`/api/tags/custom.tag`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                assert.equal(res.body.name, "custom.tag");
+                //assert.equal(res.body.name, "custom.tag");
                 assert.equal(res.body.interaction, "ButtonClick");
                 assert.equal(res.body.value, "test");
                 done();
@@ -162,11 +162,11 @@ describe("Tag Integration Tests: ", () => {
 
         it("GET updated tag and verify information", (done) => {
             chai.request(app)
-            .get(`/api/tags/${tag_name}`)
+            .get(`/api/tags/custom.tag`)
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                assert.equal(res.body.name, "custom.tag");
+                assert.equal(res.body.tag.name, "custom.tag");
                 assert.equal(res.body.interaction, "ImageSelected");
                 assert.equal(res.body.value, "testing");
                 done();
