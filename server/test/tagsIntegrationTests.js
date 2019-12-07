@@ -69,7 +69,6 @@ describe("Tag Integration Tests: ", () => {
             .send({name: tag_name})
             .end((err, res) => {
                 res.should.have.status(201);
-                tags = res.body.tags.name;
                 done();
             });
 
@@ -81,7 +80,7 @@ describe("Tag Integration Tests: ", () => {
             .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                assert.equal(res.body.tag.name, "test");
+                assert.equal(res.body.tagName, "test");
                 done();
             });
         });
